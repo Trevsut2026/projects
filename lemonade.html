@@ -1,0 +1,1492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hightouch for Lemonade — Cross-sell insurance around life's biggest moments</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── RESET & BASE ─────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', 'Lato', sans-serif;
+      background: #fff;
+      color: #101111;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { text-decoration: none; color: inherit; }
+    img { max-width: 100%; display: block; }
+    button { cursor: pointer; border: none; background: none; font-family: inherit; }
+
+    /* ─── TOKENS ────────────────────────────────────────────── */
+    :root {
+      --pink:        #ff0083;
+      --pink-dark:   #dc0073;
+      --pink-light:  #fff0f7;
+      --pink-muted:  rgba(255,0,131,0.12);
+      --green:       #40de9e;
+      --green-dark:  #1db87a;
+      --dark:        #0d0d0d;
+      --dark-2:      #161616;
+      --mid:         #3a3a3a;
+      --gray:        #f4f4f4;
+      --gray-2:      #e8e8e8;
+      --gray-3:      #bdc7c2;
+      --text:        #101111;
+      --text-mid:    #4a4a4a;
+      --text-light:  #7b7b7b;
+      --radius:      10px;
+      --radius-lg:   18px;
+      --shadow:      0 2px 16px rgba(0,0,0,0.07);
+      --shadow-lg:   0 8px 40px rgba(0,0,0,0.12);
+      --transition:  0.22s ease;
+    }
+
+    /* ─── NAV ───────────────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--dark);
+      height: 60px;
+      display: flex;
+      align-items: center;
+      padding: 0 32px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .nav-inner {
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: #fff;
+      letter-spacing: -0.3px;
+    }
+    .nav-logo span { color: var(--green); }
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+    .nav-links a {
+      color: rgba(255,255,255,0.65);
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: color var(--transition);
+    }
+    .nav-links a:hover { color: #fff; }
+    .nav-actions { display: flex; gap: 12px; align-items: center; }
+    .btn-ghost {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.875rem;
+      font-weight: 500;
+      padding: 7px 14px;
+      border-radius: var(--radius);
+      transition: color var(--transition);
+    }
+    .btn-ghost:hover { color: #fff; }
+    .btn-primary {
+      background: var(--green);
+      color: var(--dark);
+      font-size: 0.875rem;
+      font-weight: 700;
+      padding: 8px 18px;
+      border-radius: var(--radius);
+      transition: background var(--transition), transform 0.1s;
+    }
+    .btn-primary:hover { background: var(--green-dark); color: #fff; }
+    .btn-primary:active { transform: scale(0.97); }
+
+    /* ─── HERO ──────────────────────────────────────────────── */
+    .hero {
+      background: var(--dark-2);
+      padding: 72px 32px 80px;
+      text-align: center;
+    }
+    .hero-inner {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    /* Lemonade logo badge */
+    .lemonade-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255,0,131,0.1);
+      border: 1px solid rgba(255,0,131,0.25);
+      border-radius: 40px;
+      padding: 8px 20px 8px 8px;
+      margin-bottom: 36px;
+    }
+    .lemonade-logo-pill {
+      background: var(--pink);
+      border-radius: 30px;
+      padding: 5px 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .lemon-icon { font-size: 1rem; line-height: 1; }
+    .lemonade-wordmark {
+      font-family: 'Lato', sans-serif;
+      font-weight: 900;
+      font-size: 0.85rem;
+      color: #fff;
+      letter-spacing: 0.3px;
+    }
+    .badge-label {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.7);
+      font-weight: 500;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 4.5vw, 3.1rem);
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.15;
+      letter-spacing: -0.8px;
+      margin-bottom: 20px;
+    }
+    .hero h1 .highlight {
+      background: linear-gradient(90deg, var(--pink), #ff6eb4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero h2 {
+      font-size: 1.125rem;
+      font-weight: 400;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.65;
+      margin-bottom: 36px;
+      max-width: 620px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .hero-cta-group { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn-hero-primary {
+      background: var(--pink);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 14px 30px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      transition: background var(--transition), transform 0.1s;
+    }
+    .btn-hero-primary:hover { background: var(--pink-dark); }
+    .btn-hero-primary:active { transform: scale(0.97); }
+    .btn-hero-secondary {
+      background: transparent;
+      color: rgba(255,255,255,0.75);
+      font-size: 1rem;
+      font-weight: 500;
+      padding: 14px 30px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.15);
+      cursor: pointer;
+      transition: border-color var(--transition), color var(--transition);
+    }
+    .btn-hero-secondary:hover { border-color: rgba(255,255,255,0.35); color: #fff; }
+
+    /* ─── SOCIAL PROOF ──────────────────────────────────────── */
+    .logos-section {
+      background: var(--dark);
+      padding: 28px 32px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      overflow: hidden;
+    }
+    .logos-label {
+      text-align: center;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: rgba(255,255,255,0.3);
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      margin-bottom: 20px;
+    }
+    .logos-track-wrapper { overflow: hidden; position: relative; }
+    .logos-track-wrapper::before,
+    .logos-track-wrapper::after {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 120px;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .logos-track-wrapper::before { left: 0; background: linear-gradient(90deg, var(--dark), transparent); }
+    .logos-track-wrapper::after  { right: 0; background: linear-gradient(-90deg, var(--dark), transparent); }
+    .logos-track {
+      display: flex;
+      gap: 56px;
+      align-items: center;
+      animation: marquee 28s linear infinite;
+      width: max-content;
+    }
+    @keyframes marquee {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .logo-item {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+    }
+
+    /* ─── USE CASES ─────────────────────────────────────────── */
+    .use-cases {
+      padding: 88px 32px;
+      background: #fff;
+    }
+    .use-cases-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .section-eyebrow {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--pink);
+      margin-bottom: 14px;
+    }
+    .section-title {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      line-height: 1.2;
+      margin-bottom: 60px;
+      max-width: 600px;
+    }
+    .use-cases-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+    .use-case-card {
+      background: var(--gray);
+      border-radius: var(--radius-lg);
+      padding: 32px 28px;
+      border: 1px solid var(--gray-2);
+      transition: box-shadow var(--transition), border-color var(--transition);
+    }
+    .use-case-card:hover {
+      box-shadow: var(--shadow-lg);
+      border-color: var(--pink-light);
+    }
+    .uc-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: var(--pink-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      margin-bottom: 18px;
+    }
+    .use-case-card h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      line-height: 1.3;
+      letter-spacing: -0.2px;
+    }
+    .use-case-card p {
+      font-size: 0.9rem;
+      color: var(--text-mid);
+      line-height: 1.65;
+    }
+
+    /* ─── QUOTE ─────────────────────────────────────────────── */
+    .quote-section {
+      background: var(--dark-2);
+      padding: 72px 32px;
+    }
+    .quote-inner {
+      max-width: 780px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .quote-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 28px;
+      color: rgba(255,255,255,0.5);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .quote-logo-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+    blockquote {
+      font-size: clamp(1.1rem, 2.2vw, 1.45rem);
+      font-weight: 400;
+      color: rgba(255,255,255,0.88);
+      line-height: 1.65;
+      font-style: italic;
+      margin-bottom: 28px;
+    }
+    .quote-attr {
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.45);
+    }
+    .quote-attr strong { color: rgba(255,255,255,0.8); font-weight: 600; }
+    .quote-link {
+      display: inline-block;
+      margin-top: 20px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--green);
+      border-bottom: 1px solid rgba(64,222,158,0.3);
+      transition: border-color var(--transition);
+    }
+    .quote-link:hover { border-color: var(--green); }
+
+    /* ─── PRODUCT TABS ──────────────────────────────────────── */
+    .product-section {
+      padding: 88px 32px;
+      background: #fff;
+    }
+    .product-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .product-header { margin-bottom: 52px; }
+    .tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--gray-2);
+      margin-bottom: 40px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      padding: 14px 24px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-light);
+      border: none;
+      background: none;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      white-space: nowrap;
+      transition: color var(--transition), border-color var(--transition);
+    }
+    .tab-btn.active { color: var(--pink); border-bottom-color: var(--pink); }
+    .tab-btn:hover:not(.active) { color: var(--text); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+    .tab-text h3 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      margin-bottom: 14px;
+    }
+    .tab-text p {
+      font-size: 1rem;
+      color: var(--text-mid);
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+    .tab-text ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .tab-text ul li {
+      font-size: 0.9rem;
+      color: var(--text-mid);
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .tab-text ul li::before {
+      content: '';
+      width: 18px;
+      height: 18px;
+      min-width: 18px;
+      border-radius: 50%;
+      background: var(--pink-muted);
+      border: 1.5px solid var(--pink);
+      margin-top: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 10 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 4l2.5 2.5L9 1' stroke='%23ff0083' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 10px;
+    }
+    .tab-visual {
+      background: var(--gray);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      border: 1px solid var(--gray-2);
+      min-height: 320px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .mock-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .mock-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+    .mock-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+    .mock-card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 14px 16px;
+      border: 1px solid var(--gray-2);
+      font-size: 0.85rem;
+      color: var(--text-mid);
+    }
+    .mock-card strong { color: var(--text); display: block; margin-bottom: 4px; font-weight: 600; }
+    .mock-tag {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+    .tag-pink { background: var(--pink-muted); color: var(--pink); }
+    .tag-green { background: rgba(64,222,158,0.12); color: #1a9e6a; }
+    .tag-blue { background: rgba(59,130,246,0.1); color: #2563eb; }
+    .mock-row { display: flex; justify-content: space-between; align-items: center; }
+    .mock-bar-wrap { background: var(--gray-2); border-radius: 4px; height: 8px; flex: 1; margin: 0 12px; overflow: hidden; }
+    .mock-bar { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--pink), #ff6eb4); }
+    .mock-pct { font-size: 0.78rem; font-weight: 700; color: var(--pink); }
+
+    /* ─── ARCHITECTURE ──────────────────────────────────────── */
+    .arch-section {
+      background: var(--gray);
+      padding: 88px 32px;
+    }
+    .arch-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+    .arch-text {}
+    .arch-text h2 {
+      font-size: clamp(1.5rem, 3vw, 2.1rem);
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      margin-bottom: 20px;
+      line-height: 1.2;
+    }
+    .arch-text p {
+      font-size: 1rem;
+      color: var(--text-mid);
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+    .arch-points { display: flex; flex-direction: column; gap: 18px; }
+    .arch-point {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .arch-point-icon {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      background: var(--pink-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      min-width: 36px;
+    }
+    .arch-point-text h4 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin-bottom: 3px;
+    }
+    .arch-point-text p {
+      font-size: 0.85rem;
+      color: var(--text-mid);
+      margin: 0;
+    }
+    .arch-diagram {
+      background: var(--dark-2);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .arch-flow-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+    .arch-flow-icon {
+      width: 40px; height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+    .arch-flow-label { font-size: 0.875rem; font-weight: 600; color: rgba(255,255,255,0.85); }
+    .arch-flow-sub { font-size: 0.75rem; color: rgba(255,255,255,0.4); margin-top: 2px; }
+    .arch-flow-arrow {
+      text-align: center;
+      color: rgba(255,255,255,0.2);
+      font-size: 1rem;
+      padding: 6px 0;
+    }
+    .arch-flow-badges {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 12px 16px;
+    }
+    .flow-badge {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.73rem;
+      font-weight: 600;
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.55);
+      border: 1px solid rgba(255,255,255,0.09);
+    }
+    .flow-badge.green { background: rgba(64,222,158,0.12); color: var(--green); border-color: rgba(64,222,158,0.2); }
+
+    /* ─── SECURITY ──────────────────────────────────────────── */
+    .security-section {
+      background: #fff;
+      padding: 72px 32px;
+      border-top: 1px solid var(--gray-2);
+    }
+    .security-inner {
+      max-width: 780px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .security-inner h2 {
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 800;
+      margin-bottom: 14px;
+      letter-spacing: -0.3px;
+    }
+    .security-inner p {
+      font-size: 1rem;
+      color: var(--text-mid);
+      line-height: 1.7;
+      margin-bottom: 36px;
+    }
+    .security-badges { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .sec-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 40px;
+      border: 1px solid var(--gray-2);
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-mid);
+    }
+    .sec-icon { font-size: 1rem; }
+
+    /* ─── COMPARISON ────────────────────────────────────────── */
+    .comparison-section {
+      background: var(--gray);
+      padding: 88px 32px;
+    }
+    .comparison-inner {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .comparison-inner h2 {
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      margin-bottom: 14px;
+    }
+    .comparison-inner > p {
+      font-size: 1rem;
+      color: var(--text-mid);
+      margin-bottom: 48px;
+      max-width: 540px;
+      line-height: 1.65;
+    }
+    .comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .comp-table thead tr {
+      background: var(--dark-2);
+    }
+    .comp-table th {
+      padding: 16px 24px;
+      text-align: left;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.85);
+    }
+    .comp-table th:last-child { color: var(--green); }
+    .comp-table td {
+      padding: 14px 24px;
+      font-size: 0.88rem;
+      color: var(--text-mid);
+      border-bottom: 1px solid var(--gray-2);
+      background: #fff;
+    }
+    .comp-table td:first-child { font-weight: 600; color: var(--text); }
+    .comp-table td.yes { color: #16a34a; font-weight: 600; }
+    .comp-table td.no  { color: #dc2626; font-weight: 600; }
+    .comp-table td.partial { color: #d97706; font-weight: 600; }
+    .comp-table tbody tr:last-child td { border-bottom: none; }
+
+    /* ─── CASE STUDIES ──────────────────────────────────────── */
+    .stories-section {
+      background: #fff;
+      padding: 88px 32px;
+    }
+    .stories-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .stories-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; }
+    .stories-header h2 {
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      max-width: 440px;
+    }
+    .stories-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .story-card {
+      background: var(--gray);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      border: 1px solid var(--gray-2);
+      display: flex;
+      flex-direction: column;
+      transition: box-shadow var(--transition), border-color var(--transition);
+    }
+    .story-card:hover { box-shadow: var(--shadow-lg); border-color: var(--gray-3); }
+    .story-company-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--dark-2);
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-bottom: 18px;
+      width: fit-content;
+    }
+    .story-company-icon { font-size: 1.1rem; }
+    .story-company-name { font-size: 0.8rem; font-weight: 700; color: rgba(255,255,255,0.75); }
+    .story-card h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      line-height: 1.4;
+      margin-bottom: 12px;
+      flex: 1;
+    }
+    .story-stat {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--pink);
+      margin-bottom: 4px;
+      letter-spacing: -0.5px;
+    }
+    .story-stat-label { font-size: 0.8rem; color: var(--text-light); margin-bottom: 16px; }
+    .story-link {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-light);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: color var(--transition);
+    }
+    .story-link:hover { color: var(--pink); }
+    .story-link::after { content: '→'; }
+
+    /* ─── BOTTOM CTA ────────────────────────────────────────── */
+    .bottom-cta {
+      background: linear-gradient(135deg, var(--dark-2) 0%, #1a0a10 50%, #0d0d0d 100%);
+      padding: 88px 32px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .bottom-cta::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(255,0,131,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .bottom-cta-inner { max-width: 620px; margin: 0 auto; position: relative; }
+    .bottom-cta-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--pink-muted);
+      border: 1px solid rgba(255,0,131,0.2);
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--pink);
+      margin-bottom: 24px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+    .bottom-cta h2 {
+      font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.4px;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+    .bottom-cta p {
+      font-size: 1rem;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 36px;
+      line-height: 1.65;
+    }
+    .bottom-cta-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+    /* ─── FOOTER ────────────────────────────────────────────── */
+    .footer {
+      background: var(--dark);
+      padding: 56px 32px 32px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .footer-top {
+      display: grid;
+      grid-template-columns: 260px repeat(4, 1fr);
+      gap: 40px;
+      margin-bottom: 48px;
+    }
+    .footer-brand {}
+    .footer-logo {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    .footer-logo span { color: var(--green); }
+    .footer-tagline {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.35);
+      line-height: 1.6;
+    }
+    .footer-col h4 {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.9px;
+      color: rgba(255,255,255,0.35);
+      margin-bottom: 14px;
+    }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+    .footer-col ul li a {
+      font-size: 0.855rem;
+      color: rgba(255,255,255,0.55);
+      transition: color var(--transition);
+    }
+    .footer-col ul li a:hover { color: rgba(255,255,255,0.9); }
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .footer-bottom-left { font-size: 0.8rem; color: rgba(255,255,255,0.3); }
+    .footer-bottom-right { display: flex; gap: 20px; }
+    .footer-bottom-right a {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.3);
+      transition: color var(--transition);
+    }
+    .footer-bottom-right a:hover { color: rgba(255,255,255,0.6); }
+
+    /* ─── UTILS ─────────────────────────────────────────────── */
+    .text-pink { color: var(--pink); }
+    .text-green { color: var(--green); }
+    .mt-2 { margin-top: 8px; }
+
+    /* ─── RESPONSIVE ────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .use-cases-grid { grid-template-columns: 1fr; }
+      .tab-panel.active { grid-template-columns: 1fr; }
+      .arch-inner { grid-template-columns: 1fr; }
+      .stories-grid { grid-template-columns: 1fr; }
+      .stories-header { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+      .nav-links { display: none; }
+    }
+    @media (max-width: 600px) {
+      nav { padding: 0 16px; }
+      .hero { padding: 52px 20px 60px; }
+      .use-cases, .product-section, .arch-section,
+      .comparison-section, .stories-section, .bottom-cta { padding: 56px 20px; }
+      .footer-top { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════ NAV ═════════════════════════════ -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">High<span>touch</span></a>
+    <ul class="nav-links">
+      <li><a href="#">Platform</a></li>
+      <li><a href="#">Solutions</a></li>
+      <li><a href="#">Integrations</a></li>
+      <li><a href="#">Customers</a></li>
+      <li><a href="#">Resources</a></li>
+      <li><a href="#">Pricing</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="#" class="btn-ghost">Log in</a>
+      <a href="https://hightouch.chilipiper.com/me/trevor-sutley/default-meeting" target="_blank" rel="noopener" class="btn-primary">Get a demo</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════ HERO ════════════════════════════ -->
+<section class="hero">
+  <div class="hero-inner">
+
+    <!-- Lemonade brand badge -->
+    <div class="lemonade-badge">
+      <div class="lemonade-logo-pill">
+        <span class="lemon-icon">🍋</span>
+        <span class="lemonade-wordmark">lemonade</span>
+      </div>
+      <span class="badge-label">Personalized for Lemonade</span>
+    </div>
+
+    <h1>
+      Cross-sell insurance around<br />
+      <span class="highlight">life's biggest moments</span>
+    </h1>
+
+    <h2>
+      Hightouch helps Lemonade's marketing and data teams detect real life changes — a new home, a new pet, a new family member — and respond with genuinely helpful coverage, not another mass email campaign.
+    </h2>
+
+    <div class="hero-cta-group">
+      <a href="https://hightouch.chilipiper.com/me/trevor-sutley/default-meeting" target="_blank" rel="noopener" class="btn-hero-primary" style="display:inline-block;text-decoration:none;line-height:1.2">
+        Get a demo
+      </a>
+      <button class="btn-hero-secondary" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">
+        See how it works
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ SOCIAL PROOF ════════════════════ -->
+<section class="logos-section">
+  <p class="logos-label">Trusted by the world's most innovative companies</p>
+  <div class="logos-track-wrapper">
+    <div class="logos-track">
+      <!-- set 1 -->
+      <span class="logo-item">Chime</span>
+      <span class="logo-item">DraftKings</span>
+      <span class="logo-item">Ramp</span>
+      <span class="logo-item">Spotify</span>
+      <span class="logo-item">PetSmart</span>
+      <span class="logo-item">WHOOP</span>
+      <span class="logo-item">Grammarly</span>
+      <span class="logo-item">Autotrader</span>
+      <span class="logo-item">Warner Music Group</span>
+      <span class="logo-item">Nando's</span>
+      <span class="logo-item">Domino's</span>
+      <span class="logo-item">Cars.com</span>
+      <span class="logo-item">DocuSign</span>
+      <span class="logo-item">Iterable</span>
+      <!-- set 2 (duplicate for seamless loop) -->
+      <span class="logo-item">Chime</span>
+      <span class="logo-item">DraftKings</span>
+      <span class="logo-item">Ramp</span>
+      <span class="logo-item">Spotify</span>
+      <span class="logo-item">PetSmart</span>
+      <span class="logo-item">WHOOP</span>
+      <span class="logo-item">Grammarly</span>
+      <span class="logo-item">Autotrader</span>
+      <span class="logo-item">Warner Music Group</span>
+      <span class="logo-item">Nando's</span>
+      <span class="logo-item">Domino's</span>
+      <span class="logo-item">Cars.com</span>
+      <span class="logo-item">DocuSign</span>
+      <span class="logo-item">Iterable</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ USE CASES ═══════════════════════ -->
+<section class="use-cases" id="features">
+  <div class="use-cases-inner">
+    <span class="section-eyebrow">Built for Insurance</span>
+    <h2 class="section-title">Everything you need to grow with your policyholders</h2>
+    <div class="use-cases-grid">
+
+      <div class="use-case-card">
+        <div class="uc-icon">🧬</div>
+        <h3>Unified policyholder profiles across every insurance line</h3>
+        <p>Connect renters, homeowners, auto, pet, and life data into a single, holistic view of each customer — no more siloed data per product line. Know what coverage they have, what they don't, and what fits their life right now.</p>
+      </div>
+
+      <div class="use-case-card">
+        <div class="uc-icon">📍</div>
+        <h3>Life event signals that trigger genuine cross-sell moments</h3>
+        <p>When someone buys a home, adds a pet to a policy, starts a family, or gets a new car, Hightouch detects it automatically and arms your team with the right context at exactly the right moment — not weeks later.</p>
+      </div>
+
+      <div class="use-case-card">
+        <div class="uc-icon">💌</div>
+        <h3>Personalized recommendations, not mass email blasts</h3>
+        <p>Reach each policyholder through the right channel — push, in-app, email, or SMS — with coverage that actually makes sense for their life stage. Fewer touchpoints, more meaningful conversations, higher conversion.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ QUOTE ════════════════════════════ -->
+<section class="quote-section">
+  <div class="quote-inner">
+    <div class="quote-logo">
+      <span class="quote-logo-dot"></span>
+      Chime · Financial Services Customer
+    </div>
+    <blockquote>
+      "With Hightouch, we went from guessing which customers might want a new product to actually knowing — based on real signals in our data. The difference in engagement is night and day."
+    </blockquote>
+    <p class="quote-attr">
+      <strong>Head of Growth Marketing</strong> at Chime
+    </p>
+    <a href="#" class="quote-link">Read the case study</a>
+  </div>
+</section>
+
+<!-- ═══════════════════════ PRODUCT TABS ════════════════════ -->
+<section class="product-section">
+  <div class="product-inner">
+    <div class="product-header">
+      <span class="section-eyebrow">Platform Capabilities</span>
+      <h2 class="section-title">Everything you need to grow coverage with every customer</h2>
+    </div>
+
+    <div class="tabs" role="tablist">
+      <button class="tab-btn active" onclick="switchTab(0)" role="tab">Build any audience</button>
+      <button class="tab-btn" onclick="switchTab(1)" role="tab">Plan customer journeys</button>
+      <button class="tab-btn" onclick="switchTab(2)" role="tab">Run better experiments</button>
+      <button class="tab-btn" onclick="switchTab(3)" role="tab">Uncover insights</button>
+    </div>
+
+    <!-- Tab 0: Build any audience -->
+    <div class="tab-panel active">
+      <div class="tab-text">
+        <h3>Build any audience — from any data</h3>
+        <p>Enable your marketing team to use all of your policyholder data — not just email-list-level events. Build and test any segment using behavioral signals, policy attributes, and life event flags your data team already captures.</p>
+        <ul>
+          <li>Segment policyholders by coverage gaps, life stage, and churn risk</li>
+          <li>Combine policy data with behavioral signals from the Lemonade app</li>
+          <li>Let marketers self-serve without waiting on SQL requests</li>
+          <li>Preview audience sizes in real-time before launching a campaign</li>
+        </ul>
+      </div>
+      <div class="tab-visual">
+        <div class="mock-header">
+          <div class="mock-dot" style="background:#ff0083"></div>
+          <span class="mock-label">Audience Builder</span>
+        </div>
+        <div class="mock-card">
+          <strong>Renters → Homeowners Signal</strong>
+          <span>Active renters with address change in last 60 days</span>
+          <div class="mt-2"><span class="mock-tag tag-pink">42,810 users</span></div>
+        </div>
+        <div class="mock-card">
+          <strong>New Pet Owner — No Pet Policy</strong>
+          <span>Customers who added pet rider or searched pet insurance</span>
+          <div class="mt-2"><span class="mock-tag tag-pink">18,340 users</span></div>
+        </div>
+        <div class="mock-card">
+          <strong>Life Event: New Driver</strong>
+          <span>Household with new licensed driver, no auto policy</span>
+          <div class="mt-2"><span class="mock-tag tag-pink">9,920 users</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 1: Plan customer journeys -->
+    <div class="tab-panel">
+      <div class="tab-text">
+        <h3>Orchestrate journeys around real life, not campaign calendars</h3>
+        <p>Design cross-sell journeys that respond to what's actually happening in your policyholders' lives — not when your next email blast is scheduled. Coordinate across push, in-app, email, and SMS without channel conflicts.</p>
+        <ul>
+          <li>Trigger life-event journeys the moment a signal fires</li>
+          <li>Apply frequency caps so customers are never over-messaged</li>
+          <li>Pause campaigns automatically when a purchase occurs</li>
+          <li>Sync audiences to Braze, Iterable, Klaviyo, and 250+ tools</li>
+        </ul>
+      </div>
+      <div class="tab-visual">
+        <div class="mock-header">
+          <div class="mock-dot" style="background:#40de9e"></div>
+          <span class="mock-label">Journey Builder — "New Home" Flow</span>
+        </div>
+        <div class="mock-card">
+          <div class="mock-row">
+            <strong style="margin:0">Address change detected</strong>
+            <span class="mock-tag tag-green">Trigger</span>
+          </div>
+        </div>
+        <div style="text-align:center;color:var(--gray-3);padding:2px 0">↓</div>
+        <div class="mock-card">
+          <div class="mock-row">
+            <strong style="margin:0">Wait 3 days · Check: has homeowners?</strong>
+            <span class="mock-tag tag-blue">Filter</span>
+          </div>
+        </div>
+        <div style="text-align:center;color:var(--gray-3);padding:2px 0">↓</div>
+        <div class="mock-card">
+          <div class="mock-row">
+            <strong style="margin:0">Send in-app: "Protect your new home"</strong>
+            <span class="mock-tag tag-pink">Action</span>
+          </div>
+        </div>
+        <div style="text-align:center;color:var(--gray-3);padding:2px 0">↓</div>
+        <div class="mock-card">
+          <div class="mock-row">
+            <strong style="margin:0">If no open in 48h → personalized email</strong>
+            <span class="mock-tag tag-green">Fallback</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 2: Run experiments -->
+    <div class="tab-panel">
+      <div class="tab-text">
+        <h3>Run rigorous experiments to prove what works</h3>
+        <p>Set up A/B tests, multivariate tests, and holdout groups directly on top of your data warehouse. Measure true incrementality — not just open rates — and tie every campaign back to actual policy conversions.</p>
+        <ul>
+          <li>True holdout groups to measure incremental lift</li>
+          <li>Multivariate tests across channel, message, and timing</li>
+          <li>Statistical significance reporting in plain language</li>
+          <li>Results synced back to your data warehouse automatically</li>
+        </ul>
+      </div>
+      <div class="tab-visual">
+        <div class="mock-header">
+          <div class="mock-dot" style="background:#40de9e"></div>
+          <span class="mock-label">Experiment: Homeowners Upsell</span>
+        </div>
+        <div class="mock-card">
+          <strong>Variant A · In-app nudge at day 3</strong>
+          <div class="mock-row mt-2">
+            <span style="font-size:0.78rem;color:var(--text-light)">Conversion</span>
+            <div class="mock-bar-wrap"><div class="mock-bar" style="width:62%"></div></div>
+            <span class="mock-pct">6.2%</span>
+          </div>
+        </div>
+        <div class="mock-card">
+          <strong>Variant B · Email at day 1</strong>
+          <div class="mock-row mt-2">
+            <span style="font-size:0.78rem;color:var(--text-light)">Conversion</span>
+            <div class="mock-bar-wrap"><div class="mock-bar" style="width:38%"></div></div>
+            <span class="mock-pct">3.8%</span>
+          </div>
+        </div>
+        <div class="mock-card">
+          <strong>Holdout group · No message</strong>
+          <div class="mock-row mt-2">
+            <span style="font-size:0.78rem;color:var(--text-light)">Conversion</span>
+            <div class="mock-bar-wrap"><div class="mock-bar" style="width:12%"></div></div>
+            <span class="mock-pct">1.2%</span>
+          </div>
+        </div>
+        <div style="text-align:center;margin-top:4px">
+          <span class="mock-tag tag-green" style="font-size:0.78rem">Variant A wins · +417% lift vs holdout</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 3: Uncover insights -->
+    <div class="tab-panel">
+      <div class="tab-text">
+        <h3>Uncover what drives cross-sell, directly from your data</h3>
+        <p>Use AI-powered intelligence to explore which life events actually predict insurance conversions, which segments are most valuable, and where revenue opportunities are hiding in your existing book of business.</p>
+        <ul>
+          <li>AI-generated audience insights and trend explanations</li>
+          <li>Revenue attribution tied directly to policy data</li>
+          <li>Customer lifetime value models for each insurance line</li>
+          <li>Anomaly detection to catch drop-off in conversion funnels</li>
+        </ul>
+      </div>
+      <div class="tab-visual">
+        <div class="mock-header">
+          <div class="mock-dot" style="background:#ff0083"></div>
+          <span class="mock-label">Intelligence — Cross-sell Revenue</span>
+        </div>
+        <div class="mock-card">
+          <strong>Top life event → policy conversion</strong>
+          <div class="mock-row mt-2">
+            <span style="font-size:0.78rem;color:var(--text-light)">🏠 Home purchase</span>
+            <div class="mock-bar-wrap"><div class="mock-bar" style="width:80%"></div></div>
+            <span class="mock-pct">8.1%</span>
+          </div>
+          <div class="mock-row mt-2">
+            <span style="font-size:0.78rem;color:var(--text-light)">🐾 Pet added</span>
+            <div class="mock-bar-wrap"><div class="mock-bar" style="width:65%"></div></div>
+            <span class="mock-pct">6.6%</span>
+          </div>
+          <div class="mock-row mt-2">
+            <span style="font-size:0.78rem;color:var(--text-light)">🚗 New vehicle</span>
+            <div class="mock-bar-wrap"><div class="mock-bar" style="width:50%"></div></div>
+            <span class="mock-pct">5.1%</span>
+          </div>
+        </div>
+        <div class="mock-card">
+          <strong>AI Summary</strong>
+          <span>Customers who experience a home purchase within 90 days are 6.7x more likely to add homeowners coverage if contacted within 5 days.</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══════════════════════ ARCHITECTURE ════════════════════ -->
+<section class="arch-section">
+  <div class="arch-inner">
+    <div class="arch-text">
+      <span class="section-eyebrow">Composable CDP</span>
+      <h2>Built on top of the data you already have</h2>
+      <p>Hightouch doesn't ask you to rebuild your data infrastructure. It connects directly to the data warehouse Lemonade already runs — Snowflake, BigQuery, or Databricks — and turns it into a full CDP that marketers can actually use.</p>
+      <div class="arch-points">
+        <div class="arch-point">
+          <div class="arch-point-icon">🗄️</div>
+          <div class="arch-point-text">
+            <h4>Leverage your existing data</h4>
+            <p>All your policyholder data, behavioral events, and model outputs — available immediately, no ETL rebuild required.</p>
+          </div>
+        </div>
+        <div class="arch-point">
+          <div class="arch-point-icon">🔒</div>
+          <div class="arch-point-text">
+            <h4>Zero data duplication</h4>
+            <p>Hightouch never copies your data. It reads directly from your warehouse, keeping you fully compliant and in control.</p>
+          </div>
+        </div>
+        <div class="arch-point">
+          <div class="arch-point-icon">⚡</div>
+          <div class="arch-point-text">
+            <h4>Real-time, sub-second activation</h4>
+            <p>Detect a life event and trigger a personalized experience in under a second — before the window closes.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arch-diagram">
+      <div class="arch-flow-item">
+        <div class="arch-flow-icon" style="background:rgba(255,0,131,0.15)">🍋</div>
+        <div>
+          <div class="arch-flow-label">Lemonade Data Warehouse</div>
+          <div class="arch-flow-sub">Snowflake · BigQuery · Databricks</div>
+        </div>
+      </div>
+      <div class="arch-flow-arrow">↓</div>
+      <div class="arch-flow-item">
+        <div class="arch-flow-icon" style="background:rgba(64,222,158,0.15)">⚙️</div>
+        <div>
+          <div class="arch-flow-label">Hightouch Composable CDP</div>
+          <div class="arch-flow-sub">Audiences · Journeys · AI Decisioning</div>
+        </div>
+      </div>
+      <div class="arch-flow-badges">
+        <span class="flow-badge green">Life event detection</span>
+        <span class="flow-badge green">Coverage gap analysis</span>
+        <span class="flow-badge green">AI propensity scores</span>
+        <span class="flow-badge green">Real-time triggers</span>
+      </div>
+      <div class="arch-flow-arrow">↓</div>
+      <div class="arch-flow-item">
+        <div class="arch-flow-icon" style="background:rgba(255,255,255,0.06)">📤</div>
+        <div>
+          <div class="arch-flow-label">Activation Destinations</div>
+          <div class="arch-flow-sub">Braze · Iterable · Klaviyo · Segment · Ads</div>
+        </div>
+      </div>
+      <div class="arch-flow-badges">
+        <span class="flow-badge">In-app push</span>
+        <span class="flow-badge">Email</span>
+        <span class="flow-badge">SMS</span>
+        <span class="flow-badge">Paid retargeting</span>
+        <span class="flow-badge">Agent handoff</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ SECURITY ════════════════════════ -->
+<section class="security-section">
+  <div class="security-inner">
+    <span class="section-eyebrow">Data Security</span>
+    <h2>We don't store your policyholders' data</h2>
+    <p>Hightouch reads directly from your warehouse and activates data without ever storing a copy. For a regulated insurance company, that means fewer compliance risks, faster security reviews, and full control over your data estate.</p>
+    <div class="security-badges">
+      <div class="sec-badge"><span class="sec-icon">🔒</span> SOC 2 Type II</div>
+      <div class="sec-badge"><span class="sec-icon">🏅</span> ISO 27001</div>
+      <div class="sec-badge"><span class="sec-icon">🛡️</span> HIPAA Ready</div>
+      <div class="sec-badge"><span class="sec-icon">🇪🇺</span> GDPR Compliant</div>
+      <div class="sec-badge"><span class="sec-icon">✅</span> CCPA Compliant</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ COMPARISON ══════════════════════ -->
+<section class="comparison-section">
+  <div class="comparison-inner">
+    <span class="section-eyebrow">Why Hightouch</span>
+    <h2>Traditional CDP vs. Hightouch</h2>
+    <p>Most CDPs make you move your data twice and wait 6–9 months to go live. Hightouch connects to what you already have and gets your first use case live in weeks.</p>
+
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th>Capability</th>
+          <th>Traditional CDP</th>
+          <th>Hightouch</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Uses your existing warehouse</td>
+          <td class="no">✗ Requires data migration</td>
+          <td class="yes">✓ Native warehouse connectivity</td>
+        </tr>
+        <tr>
+          <td>Life event detection in real-time</td>
+          <td class="partial">⚠ Batch, often delayed</td>
+          <td class="yes">✓ Sub-second event triggers</td>
+        </tr>
+        <tr>
+          <td>Data flexibility (models, SQL, AI)</td>
+          <td class="no">✗ User & event data only</td>
+          <td class="yes">✓ Any data, any model</td>
+        </tr>
+        <tr>
+          <td>Time to first value</td>
+          <td class="no">✗ 6–9 months</td>
+          <td class="yes">✓ Weeks</td>
+        </tr>
+        <tr>
+          <td>Marketer self-service</td>
+          <td class="partial">⚠ Limited, SQL required</td>
+          <td class="yes">✓ No-code audience builder</td>
+        </tr>
+        <tr>
+          <td>Data stored by vendor</td>
+          <td class="no">✗ Duplicate storage</td>
+          <td class="yes">✓ Zero storage, reads only</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════════════════ CASE STUDIES ════════════════════ -->
+<section class="stories-section">
+  <div class="stories-inner">
+    <div class="stories-header">
+      <h2>Trusted by insurance and fintech innovators</h2>
+      <a href="#" style="font-size:0.875rem;font-weight:600;color:var(--text-light)">All case studies →</a>
+    </div>
+    <div class="stories-grid">
+
+      <div class="story-card">
+        <div class="story-company-badge">
+          <span class="story-company-icon">💙</span>
+          <span class="story-company-name">Chime</span>
+        </div>
+        <h3>Chime activates real-time behavioral data to drive personalized financial product cross-sell at scale</h3>
+        <div class="story-stat">3.2×</div>
+        <div class="story-stat-label">increase in cross-sell conversion</div>
+        <a href="#" class="story-link">Read story</a>
+      </div>
+
+      <div class="story-card">
+        <div class="story-company-badge">
+          <span class="story-company-icon">💚</span>
+          <span class="story-company-name">Ramp</span>
+        </div>
+        <h3>Ramp uses life cycle signals to expand product adoption across their SMB customer base</h3>
+        <div class="story-stat">40%</div>
+        <div class="story-stat-label">reduction in time to upsell activation</div>
+        <a href="#" class="story-link">Read story</a>
+      </div>
+
+      <div class="story-card">
+        <div class="story-company-badge">
+          <span class="story-company-icon">🏎️</span>
+          <span class="story-company-name">Autotrader</span>
+        </div>
+        <h3>Autotrader unifies buyer journey data to surface timely, relevant insurance and finance product offers</h3>
+        <div class="story-stat">80%</div>
+        <div class="story-stat-label">reduction in data integration time</div>
+        <a href="#" class="story-link">Read story</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ BOTTOM CTA ══════════════════════ -->
+<section class="bottom-cta" id="demo">
+  <div class="bottom-cta-inner">
+    <div class="bottom-cta-badge">🍋 For Lemonade</div>
+    <h2>See how Hightouch helps Lemonade grow with every policyholder</h2>
+    <p>Book a personalized demo and we'll walk you through exactly how Lemonade's marketing and data teams can activate life event signals to drive genuine cross-sell — across renters, homeowners, auto, pet, and life.</p>
+    <div class="bottom-cta-actions">
+      <a href="https://hightouch.chilipiper.com/me/trevor-sutley/default-meeting" target="_blank" rel="noopener" class="btn-hero-primary" style="display:inline-block;text-decoration:none;line-height:1.2">Get a personalized demo</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ FOOTER ═══════════════════════════ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-logo">High<span>touch</span></div>
+        <p class="footer-tagline">The Composable CDP that activates your warehouse data in 250+ destinations.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Platform</h4>
+        <ul>
+          <li><a href="#">Composable CDP</a></li>
+          <li><a href="#">AI Decisioning</a></li>
+          <li><a href="#">Real-time Personalization</a></li>
+          <li><a href="#">Customer Studio</a></li>
+          <li><a href="#">Identity Resolution</a></li>
+          <li><a href="#">Reverse ETL</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Solutions</h4>
+        <ul>
+          <li><a href="#">Marketing</a></li>
+          <li><a href="#">Data Teams</a></li>
+          <li><a href="#">Financial Services</a></li>
+          <li><a href="#">Insurance</a></li>
+          <li><a href="#">Retail & eCommerce</a></li>
+          <li><a href="#">Healthcare</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="#">Documentation</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Playbooks</a></li>
+          <li><a href="#">Integrations</a></li>
+          <li><a href="#">Compare CDPs</a></li>
+          <li><a href="#">Changelog</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Customers</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Press</a></li>
+          <li><a href="#">Pricing</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-bottom-left">Hightouch © 2026</span>
+      <div class="footer-bottom-right">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Cookie Policy</a>
+        <a href="#">Security</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Tab switching
+  function switchTab(index) {
+    const tabs = document.querySelectorAll('.tab-btn');
+    const panels = document.querySelectorAll('.tab-panel');
+    tabs.forEach((t, i) => t.classList.toggle('active', i === index));
+    panels.forEach((p, i) => p.classList.toggle('active', i === index));
+  }
+</script>
+
+</body>
+</html>
