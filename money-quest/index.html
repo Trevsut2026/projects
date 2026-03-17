@@ -867,6 +867,161 @@ input[type="range"]::-webkit-slider-thumb {
 .diff-easy { background: rgba(0,230,118,0.15); color: var(--green); }
 .diff-med { background: rgba(255,171,64,0.15); color: var(--orange); }
 .diff-hard { background: rgba(255,82,82,0.15); color: var(--red); }
+
+/* ── Video Cards ── */
+.video-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.2s;
+}
+.video-card:hover { border-color: var(--red); }
+.video-thumb {
+  width: 80px; height: 50px;
+  border-radius: 8px;
+  background: var(--surface2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+.video-thumb::after {
+  content: '▶';
+  position: absolute;
+  font-size: 16px;
+  color: white;
+  background: rgba(255,0,0,0.85);
+  width: 28px; height: 20px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.video-card h4 { font-size: 14px; margin-bottom: 2px; }
+.video-card p { font-size: 12px; color: var(--text-dim); line-height: 1.4; }
+.video-card .video-tag {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: rgba(255,82,82,0.15);
+  color: var(--red);
+  display: inline-block;
+  margin-top: 4px;
+}
+
+/* ── SVG Visual Diagrams ── */
+.visual-diagram {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin: 16px 0;
+  text-align: center;
+}
+.visual-diagram .diagram-label {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 14px;
+  color: var(--text-dim);
+  margin-top: 10px;
+}
+.visual-diagram svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ── Bar Chart ── */
+.bar-chart {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 12px;
+  height: 200px;
+  padding: 0 10px;
+  margin: 12px 0;
+}
+.bar-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  max-width: 80px;
+}
+.bar {
+  width: 100%;
+  border-radius: 8px 8px 4px 4px;
+  min-height: 8px;
+  transition: height 0.6s ease-out;
+  position: relative;
+}
+.bar .bar-value {
+  position: absolute;
+  top: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Fredoka', sans-serif;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.bar-label {
+  font-size: 11px;
+  color: var(--text-dim);
+  text-align: center;
+}
+
+/* ── Pie chart ── */
+.pie-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+.pie-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+.pie-legend-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ── Flow diagram ── */
+.flow-diagram {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 16px 0;
+}
+.flow-step {
+  background: var(--surface2);
+  border-radius: 12px;
+  padding: 10px 14px;
+  text-align: center;
+  font-size: 13px;
+  min-width: 70px;
+}
+.flow-step .flow-icon { font-size: 22px; display: block; margin-bottom: 4px; }
+.flow-step .flow-text { font-family: 'Fredoka', sans-serif; font-size: 12px; }
+.flow-arrow {
+  color: var(--gold);
+  font-size: 18px;
+  font-weight: bold;
+}
 </style>
 </head>
 <body>
@@ -1024,6 +1179,63 @@ input[type="range"]::-webkit-slider-thumb {
     </div>
   </div>
 
+  <h3 style="margin: 20px 0 12px; font-size:18px;">🎬 Learn by Watching</h3>
+  <p style="color:var(--text-dim); font-size:13px; margin-bottom:12px;">Some of the best financial education on YouTube — perfect if you learn better by watching:</p>
+
+  <div class="video-card" onclick="window.open('https://www.youtube.com/playlist?list=PL8dPuuaLjXtPNZwz5_o_5uirJ8gQXnhEO','_blank')">
+    <div class="video-thumb">📺</div>
+    <div>
+      <h4>Crash Course Economics</h4>
+      <p>The whole series — fun, fast-paced, and explains economics in a way that actually makes sense</p>
+      <span class="video-tag">Full Series</span>
+    </div>
+  </div>
+
+  <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=mFOracFClBg','_blank')">
+    <div class="video-thumb">📺</div>
+    <div>
+      <h4>How The Stock Market Works</h4>
+      <p>Crash Course breaks down stocks, bonds, and the market in 11 minutes</p>
+      <span class="video-tag">11 min</span>
+    </div>
+  </div>
+
+  <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=PHe0bXAIuk0','_blank')">
+    <div class="video-thumb">📺</div>
+    <div>
+      <h4>How The Economic Machine Works</h4>
+      <p>Ray Dalio explains the entire economy in 30 min — one of the best explainers ever made</p>
+      <span class="video-tag">30 min</span>
+    </div>
+  </div>
+
+  <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=Arz_9TBxGQA','_blank')">
+    <div class="video-thumb">📺</div>
+    <div>
+      <h4>Index Funds for Beginners</h4>
+      <p>Simple breakdown of what index funds are and why they're the easiest way to invest</p>
+      <span class="video-tag">12 min</span>
+    </div>
+  </div>
+
+  <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=4j2emMn7UaI','_blank')">
+    <div class="video-thumb">📺</div>
+    <div>
+      <h4>The Psychology of Money — Animated Summary</h4>
+      <p>Key insights from Morgan Housel's book in a fun animated format</p>
+      <span class="video-tag">10 min</span>
+    </div>
+  </div>
+
+  <div class="video-card" onclick="window.open('https://www.youtube.com/watch?v=uGO8dsCY1UY','_blank')">
+    <div class="video-thumb">📺</div>
+    <div>
+      <h4>Compound Interest Explained</h4>
+      <p>Visual breakdown of how compound interest snowballs your money over time</p>
+      <span class="video-tag">8 min</span>
+    </div>
+  </div>
+
   <div class="lesson-card" style="margin-top:16px;">
     <h3>🎯 The Simplest Possible Plan</h3>
     <p style="margin-bottom:12px;">If all of this still feels overwhelming, here is literally all you need to do:</p>
@@ -1072,6 +1284,18 @@ const QUESTS = [
           <p>You <strong>earn</strong> gold (income) → you <strong>spend</strong> gold on gear and potions (expenses) → you <strong>save</strong> gold for future boss fights (savings) → you <strong>invest</strong> gold to build farms that generate more gold while you sleep (investing).</p>
         </div>
         <p>Most people only know about earn and spend. The real game starts when you learn save and invest.</p>
+
+        <div class="flow-diagram">
+          <div class="flow-step" style="border:2px solid var(--green)"><span class="flow-icon">💼</span><span class="flow-text">Earn</span></div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-step" style="border:2px solid var(--red)"><span class="flow-icon">🛒</span><span class="flow-text">Spend</span></div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-step" style="border:2px solid var(--blue)"><span class="flow-icon">🏦</span><span class="flow-text">Save</span></div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-step" style="border:2px solid var(--gold)"><span class="flow-icon">📈</span><span class="flow-text">Invest</span></div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-step" style="border:2px solid var(--purple)"><span class="flow-icon">😴</span><span class="flow-text">Grow</span></div>
+        </div>
       </div>
 
       <div class="lesson-card">
@@ -1081,6 +1305,31 @@ const QUESTS = [
           <li><strong>Rule 2: Make your money work for you.</strong> Every dollar you save can be a little worker that earns more dollars while you do other things.</li>
           <li><strong>Rule 3: Time is your biggest advantage.</strong> The earlier you start, the more powerful your money becomes. A 20-year-old who invests $100/month will have MORE than a 30-year-old who invests $200/month. Time literally is money.</li>
         </ul>
+      </div>
+
+      <div class="visual-diagram">
+        <h4 style="margin-bottom:12px; font-size:15px;">📊 Starting Early vs Starting Late</h4>
+        <div class="bar-chart">
+          <div class="bar-col">
+            <div class="bar" style="height:160px; background:linear-gradient(to top, var(--gold-dim), var(--gold));">
+              <span class="bar-value" style="color:var(--gold);">$950k</span>
+            </div>
+            <span class="bar-label">Start at 20<br>$100/mo</span>
+          </div>
+          <div class="bar-col">
+            <div class="bar" style="height:125px; background:linear-gradient(to top, var(--blue), #82b1ff);">
+              <span class="bar-value" style="color:var(--blue);">$760k</span>
+            </div>
+            <span class="bar-label">Start at 30<br>$200/mo</span>
+          </div>
+          <div class="bar-col">
+            <div class="bar" style="height:55px; background:linear-gradient(to top, var(--purple), #ce93d8);">
+              <span class="bar-value" style="color:var(--purple);">$350k</span>
+            </div>
+            <span class="bar-label">Start at 40<br>$300/mo</span>
+          </div>
+        </div>
+        <div class="diagram-label">All invested until age 65 at 10% avg return. Starting early wins even with less money per month!</div>
       </div>
 
       ${makeQuiz('money-basics', 'If you start investing $100/month at age 20 vs $200/month at age 30 (both until age 65, 10% avg return), who has more?', [
@@ -1149,6 +1398,43 @@ const QUESTS = [
         </div>
       </div>
 
+      <div class="visual-diagram">
+        <h4 style="margin-bottom:12px; font-size:15px;">📈 $10,000 Growing Over Time (at 10%/year)</h4>
+        <div class="bar-chart" style="height:220px;">
+          <div class="bar-col">
+            <div class="bar" style="height:30px; background:linear-gradient(to top, var(--blue), #82b1ff);">
+              <span class="bar-value" style="color:var(--blue);">$10k</span>
+            </div>
+            <span class="bar-label">Year 0</span>
+          </div>
+          <div class="bar-col">
+            <div class="bar" style="height:55px; background:linear-gradient(to top, var(--blue), #82b1ff);">
+              <span class="bar-value" style="color:var(--blue);">$26k</span>
+            </div>
+            <span class="bar-label">Year 10</span>
+          </div>
+          <div class="bar-col">
+            <div class="bar" style="height:95px; background:linear-gradient(to top, var(--green), #69f0ae);">
+              <span class="bar-value" style="color:var(--green);">$67k</span>
+            </div>
+            <span class="bar-label">Year 20</span>
+          </div>
+          <div class="bar-col">
+            <div class="bar" style="height:150px; background:linear-gradient(to top, var(--gold-dim), var(--gold));">
+              <span class="bar-value" style="color:var(--gold);">$175k</span>
+            </div>
+            <span class="bar-label">Year 30</span>
+          </div>
+          <div class="bar-col">
+            <div class="bar" style="height:200px; background:linear-gradient(to top, var(--orange), #ffcc02);">
+              <span class="bar-value" style="color:var(--orange);">$453k</span>
+            </div>
+            <span class="bar-label">Year 40</span>
+          </div>
+        </div>
+        <div class="diagram-label">Notice how the bars get bigger faster? That's the snowball effect — most growth happens in the later years!</div>
+      </div>
+
       <div class="lesson-card">
         <h3>⏰ The Rule of 72</h3>
         <p>Want a quick trick? Divide 72 by your interest rate to find out how long it takes to DOUBLE your money.</p>
@@ -1192,6 +1478,27 @@ const QUESTS = [
           <div class="callout-label">The #1 Rule</div>
           <p><strong>Assets</strong> put money IN your pocket.<br><strong>Liabilities</strong> take money OUT of your pocket.<br><br>Rich people buy assets. Everyone else buys liabilities thinking they're assets.</p>
         </div>
+      </div>
+
+      <div class="visual-diagram">
+        <h4 style="margin-bottom:16px; font-size:15px;">⚖️ The Cash Flow Direction</h4>
+        <div style="display:flex; gap:12px; justify-content:center;">
+          <div style="flex:1; max-width:160px; background:rgba(0,230,118,0.1); border:2px solid var(--green); border-radius:14px; padding:14px; text-align:center;">
+            <div style="font-size:28px; margin-bottom:6px;">💰</div>
+            <div style="font-family:'Fredoka',sans-serif; font-size:15px; color:var(--green); margin-bottom:6px;">Assets</div>
+            <div style="font-size:22px; margin-bottom:4px;">↓</div>
+            <div style="font-size:12px; color:var(--text-dim);">Money flows<br>TO you</div>
+            <div style="margin-top:8px; font-size:11px; color:var(--green);">Stocks, rental income,<br>business, dividends</div>
+          </div>
+          <div style="flex:1; max-width:160px; background:rgba(255,82,82,0.1); border:2px solid var(--red); border-radius:14px; padding:14px; text-align:center;">
+            <div style="font-size:28px; margin-bottom:6px;">💸</div>
+            <div style="font-family:'Fredoka',sans-serif; font-size:15px; color:var(--red); margin-bottom:6px;">Liabilities</div>
+            <div style="font-size:22px; margin-bottom:4px;">↑</div>
+            <div style="font-size:12px; color:var(--text-dim);">Money flows<br>AWAY from you</div>
+            <div style="margin-top:8px; font-size:11px; color:var(--red);">Car payments, debt,<br>subscriptions, loans</div>
+          </div>
+        </div>
+        <div class="diagram-label" style="margin-top:14px;">Rich Dad's rule: Buy things that put money IN your pocket, minimize things that take it OUT</div>
       </div>
 
       <div class="lesson-card">
@@ -1299,6 +1606,45 @@ const QUESTS = [
           <tr><td>Individual Stocks</td><td>High</td><td>Varies wildly</td><td>Experienced investors</td></tr>
           <tr><td>Crypto</td><td>Very High</td><td>?????</td><td>Speculation</td></tr>
         </table>
+      </div>
+
+      <div class="visual-diagram">
+        <h4 style="margin-bottom:12px; font-size:15px;">🥧 Risk vs Return Spectrum</h4>
+        <div class="bar-chart" style="height:180px;">
+          <div class="bar-col">
+            <div class="bar" style="height:35px; background:linear-gradient(to top, #2196f3, #64b5f6);">
+              <span class="bar-value" style="color:#64b5f6;">~4%</span>
+            </div>
+            <span class="bar-label">Savings<br>💤</span>
+          </div>
+          <div class="bar-col">
+            <div class="bar" style="height:50px; background:linear-gradient(to top, #26a69a, #80cbc4);">
+              <span class="bar-value" style="color:#80cbc4;">~5%</span>
+            </div>
+            <span class="bar-label">Bonds<br>😌</span>
+          </div>
+          <div class="bar-col">
+            <div class="bar" style="height:100px; background:linear-gradient(to top, var(--green), #69f0ae);">
+              <span class="bar-value" style="color:var(--green);">~10%</span>
+            </div>
+            <span class="bar-label">Index<br>Funds 🎯</span>
+          </div>
+          <div class="bar-col">
+            <div class="bar" style="height:130px; background:linear-gradient(to top, var(--orange), #ffd54f); position:relative;">
+              <span class="bar-value" style="color:var(--orange);">???%</span>
+              <div style="position:absolute;bottom:0;left:0;right:0;height:40%;background:rgba(255,82,82,0.3);border-radius:0 0 4px 4px;"></div>
+            </div>
+            <span class="bar-label">Stocks<br>🎲</span>
+          </div>
+          <div class="bar-col">
+            <div class="bar" style="height:160px; background:linear-gradient(to top, var(--red), #ff8a80); position:relative;">
+              <span class="bar-value" style="color:var(--red);">🤷</span>
+              <div style="position:absolute;bottom:0;left:0;right:0;height:60%;background:rgba(255,82,82,0.3);border-radius:0 0 4px 4px;"></div>
+            </div>
+            <span class="bar-label">Crypto<br>🎰</span>
+          </div>
+        </div>
+        <div class="diagram-label">Higher potential returns = higher risk. The red zone shows potential losses. Index funds hit the sweet spot for most people.</div>
       </div>
 
       ${makeQuiz('invest-q', 'According to decades of data, what beats most professional money managers over 20+ years?', [
@@ -1463,6 +1809,31 @@ const QUESTS = [
 
       <div class="lesson-card">
         <h3>🎯 The Passive Income Ladder</h3>
+        <div class="visual-diagram" style="padding:16px;">
+          <div style="display:flex; flex-direction:column; gap:0; align-items:center;">
+            <div style="width:55%; background:linear-gradient(135deg, var(--gold-dim), var(--gold)); border-radius:10px 10px 0 0; padding:12px; text-align:center;">
+              <div style="font-size:18px;">🏢</div>
+              <div style="font-family:'Fredoka',sans-serif; font-size:12px; color:#1a1a2e;">Build a Business</div>
+              <div style="font-size:10px; color:#1a1a2e; opacity:0.7;">Highest effort, highest ceiling</div>
+            </div>
+            <div style="width:72%; background:linear-gradient(135deg, rgba(255,171,64,0.3), rgba(255,171,64,0.15)); border:1px solid var(--orange); padding:10px; text-align:center;">
+              <div style="font-size:16px;">📚</div>
+              <div style="font-family:'Fredoka',sans-serif; font-size:12px;">Digital Products / Content</div>
+              <div style="font-size:10px; color:var(--text-dim);">Create once, earn ongoing</div>
+            </div>
+            <div style="width:85%; background:linear-gradient(135deg, rgba(0,230,118,0.2), rgba(0,230,118,0.08)); border:1px solid var(--green); padding:10px; text-align:center;">
+              <div style="font-size:16px;">📈</div>
+              <div style="font-family:'Fredoka',sans-serif; font-size:12px;">Index Fund Investing</div>
+              <div style="font-size:10px; color:var(--text-dim);">Set it & forget it</div>
+            </div>
+            <div style="width:100%; background:linear-gradient(135deg, rgba(68,138,255,0.2), rgba(68,138,255,0.08)); border:1px solid var(--blue); border-radius:0 0 10px 10px; padding:10px; text-align:center;">
+              <div style="font-size:16px;">🏦</div>
+              <div style="font-family:'Fredoka',sans-serif; font-size:12px;">High-Yield Savings</div>
+              <div style="font-size:10px; color:var(--text-dim);">Zero effort — start here!</div>
+            </div>
+          </div>
+          <div class="diagram-label" style="margin-top:10px;">Start at the bottom, work your way up as you learn and grow</div>
+        </div>
         <p>Start at the bottom and work your way up as you learn:</p>
         <div class="callout callout-green">
           <div class="callout-label">Level 1 — Zero effort start</div>
