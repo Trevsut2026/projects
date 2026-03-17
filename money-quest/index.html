@@ -1,0 +1,2254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Money Quest - Level Up Your Financial Skills</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --bg: #0f0e17;
+  --surface: #1a1932;
+  --surface2: #232148;
+  --gold: #ffd700;
+  --gold-dim: #b8960f;
+  --green: #00e676;
+  --blue: #448aff;
+  --purple: #b388ff;
+  --pink: #ff80ab;
+  --red: #ff5252;
+  --orange: #ffab40;
+  --text: #fffffe;
+  --text-dim: #a7a9be;
+  --radius: 16px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+h1, h2, h3, h4 { font-family: 'Fredoka', sans-serif; }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 3px; }
+
+/* ── Animations ── */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .6; } }
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes pop {
+  0% { transform: scale(0.8); opacity: 0; }
+  70% { transform: scale(1.05); }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes confetti-fall {
+  0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 5px var(--gold), 0 0 10px rgba(255,215,0,0.3); }
+  50% { box-shadow: 0 0 15px var(--gold), 0 0 30px rgba(255,215,0,0.4); }
+}
+@keyframes xpPop {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-40px) scale(1.3); opacity: 0; }
+}
+
+/* ── XP Bar (fixed top) ── */
+#xp-bar-container {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  background: rgba(15,14,23,0.95);
+  backdrop-filter: blur(10px);
+  padding: 8px 16px;
+  display: none;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--surface2);
+}
+#xp-bar-container.visible { display: flex; }
+.xp-avatar-small {
+  font-size: 20px;
+  width: 30px;
+  text-align: center;
+}
+.xp-level {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  color: var(--gold);
+  font-size: 14px;
+  white-space: nowrap;
+}
+.xp-bar-track {
+  flex: 1;
+  height: 8px;
+  background: var(--surface2);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.xp-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold-dim), var(--gold));
+  border-radius: 4px;
+  transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+}
+.xp-text {
+  font-size: 12px;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+.xp-popup {
+  position: fixed;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Fredoka', sans-serif;
+  font-size: 24px;
+  color: var(--gold);
+  pointer-events: none;
+  animation: xpPop 1s ease-out forwards;
+  z-index: 1001;
+  text-shadow: 0 0 10px rgba(255,215,0,0.5);
+}
+
+/* ── Screens ── */
+.screen {
+  display: none;
+  min-height: 100vh;
+  padding: 20px;
+  padding-top: 60px;
+  max-width: 600px;
+  margin: 0 auto;
+  animation: slideUp 0.4s ease-out;
+}
+.screen.active { display: block; }
+#welcome-screen { padding-top: 20px; }
+#welcome-screen.active { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+/* ── Welcome ── */
+.welcome-stars {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.star {
+  position: absolute;
+  width: 3px; height: 3px;
+  background: white;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+.welcome-title {
+  font-size: 42px;
+  text-align: center;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, var(--gold), var(--orange), var(--gold));
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 3s linear infinite;
+}
+.welcome-coin {
+  font-size: 80px;
+  animation: float 3s ease-in-out infinite;
+  margin-bottom: 16px;
+  text-align: center;
+}
+.welcome-subtitle {
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 16px;
+  margin-bottom: 32px;
+  line-height: 1.6;
+  max-width: 340px;
+}
+
+/* ── Avatar Picker ── */
+.avatar-picker {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+.avatar-option {
+  width: 64px; height: 64px;
+  font-size: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface);
+  border: 2px solid var(--surface2);
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.avatar-option:hover, .avatar-option.selected {
+  border-color: var(--gold);
+  transform: scale(1.1);
+  box-shadow: 0 0 15px rgba(255,215,0,0.3);
+}
+.avatar-option.selected { animation: glow 2s infinite; }
+
+.name-input {
+  background: var(--surface);
+  border: 2px solid var(--surface2);
+  border-radius: 12px;
+  padding: 14px 20px;
+  color: var(--text);
+  font-size: 16px;
+  width: 100%;
+  max-width: 300px;
+  text-align: center;
+  outline: none;
+  font-family: 'Inter', sans-serif;
+  margin-bottom: 24px;
+  transition: border-color 0.2s;
+}
+.name-input:focus { border-color: var(--gold); }
+.name-input::placeholder { color: var(--text-dim); }
+
+/* ── Buttons ── */
+.btn {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  padding: 14px 36px;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn:active { transform: scale(0.95); }
+.btn-gold {
+  background: linear-gradient(135deg, var(--gold), var(--orange));
+  color: #1a1a2e;
+}
+.btn-gold:hover { box-shadow: 0 4px 20px rgba(255,215,0,0.4); }
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--surface2);
+  color: var(--text);
+  font-size: 15px;
+  padding: 10px 24px;
+}
+.btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+.btn-small {
+  font-size: 14px;
+  padding: 8px 20px;
+}
+
+/* ── Quest Map ── */
+.map-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.map-header h2 { font-size: 28px; margin-bottom: 4px; }
+.map-header p { color: var(--text-dim); font-size: 14px; }
+
+.quest-path {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0 10px;
+}
+.quest-path::before {
+  content: '';
+  position: absolute;
+  left: 35px;
+  top: 30px;
+  bottom: 30px;
+  width: 3px;
+  background: var(--surface2);
+  border-radius: 2px;
+}
+
+.quest-node {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: var(--surface);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  border: 2px solid transparent;
+}
+.quest-node:hover { border-color: var(--surface2); transform: translateX(4px); }
+.quest-node.completed { border-color: var(--green); }
+.quest-node.locked { opacity: 0.5; cursor: not-allowed; }
+.quest-node.current { border-color: var(--gold); animation: glow 2s infinite; }
+
+.quest-icon {
+  width: 50px; height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+.quest-info { flex: 1; }
+.quest-info h3 { font-size: 16px; margin-bottom: 2px; }
+.quest-info p { font-size: 13px; color: var(--text-dim); }
+.quest-xp {
+  font-family: 'Fredoka', sans-serif;
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 600;
+}
+.quest-check {
+  color: var(--green);
+  font-size: 20px;
+}
+
+/* ── Section badges ── */
+.section-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 16px;
+}
+
+/* ── Lesson Screen ── */
+.lesson-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+.lesson-header .lesson-emoji {
+  font-size: 56px;
+  display: block;
+  margin-bottom: 12px;
+  animation: float 3s ease-in-out infinite;
+}
+.lesson-header h2 { font-size: 26px; margin-bottom: 8px; }
+.lesson-header p { color: var(--text-dim); font-size: 14px; }
+
+.lesson-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 16px;
+  animation: slideUp 0.4s ease-out;
+}
+.lesson-card h3 {
+  font-size: 18px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.lesson-card p, .lesson-card li {
+  color: var(--text-dim);
+  font-size: 15px;
+  line-height: 1.7;
+}
+.lesson-card ul {
+  list-style: none;
+  padding: 0;
+}
+.lesson-card li { padding: 4px 0; }
+.lesson-card li::before {
+  content: '→ ';
+  color: var(--gold);
+}
+
+.callout {
+  background: rgba(255,215,0,0.08);
+  border-left: 3px solid var(--gold);
+  padding: 14px 16px;
+  border-radius: 0 12px 12px 0;
+  margin: 12px 0;
+}
+.callout p { color: var(--text) !important; font-size: 14px !important; }
+.callout .callout-label {
+  font-family: 'Fredoka', sans-serif;
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.callout-green {
+  background: rgba(0,230,118,0.08);
+  border-left-color: var(--green);
+}
+.callout-green .callout-label { color: var(--green); }
+
+.callout-blue {
+  background: rgba(68,138,255,0.08);
+  border-left-color: var(--blue);
+}
+.callout-blue .callout-label { color: var(--blue); }
+
+.analogy-box {
+  background: linear-gradient(135deg, rgba(179,136,255,0.1), rgba(255,128,171,0.1));
+  border-radius: var(--radius);
+  padding: 16px;
+  margin: 12px 0;
+  border: 1px solid rgba(179,136,255,0.2);
+}
+.analogy-box .analogy-label {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 13px;
+  color: var(--purple);
+  margin-bottom: 6px;
+}
+.analogy-box p { font-size: 14px; }
+
+/* ── Quiz ── */
+.quiz-container {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin: 16px 0;
+}
+.quiz-question {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 18px;
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+.quiz-options { display: flex; flex-direction: column; gap: 10px; }
+.quiz-option {
+  padding: 14px 16px;
+  background: var(--surface2);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 15px;
+  color: var(--text);
+  text-align: left;
+  font-family: 'Inter', sans-serif;
+}
+.quiz-option:hover { border-color: var(--blue); }
+.quiz-option.correct {
+  border-color: var(--green);
+  background: rgba(0,230,118,0.15);
+}
+.quiz-option.incorrect {
+  border-color: var(--red);
+  background: rgba(255,82,82,0.15);
+}
+.quiz-option:disabled { cursor: default; }
+.quiz-feedback {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  display: none;
+  line-height: 1.5;
+}
+.quiz-feedback.show { display: block; animation: pop 0.3s ease-out; }
+.quiz-feedback.correct-fb {
+  background: rgba(0,230,118,0.1);
+  color: var(--green);
+}
+.quiz-feedback.incorrect-fb {
+  background: rgba(255,82,82,0.1);
+  color: var(--red);
+}
+
+/* ── Interactive Scenarios ── */
+.scenario-box {
+  background: linear-gradient(135deg, var(--surface), var(--surface2));
+  border-radius: var(--radius);
+  padding: 20px;
+  margin: 16px 0;
+  border: 1px solid var(--surface2);
+}
+.scenario-box h4 {
+  font-size: 16px;
+  margin-bottom: 6px;
+  color: var(--orange);
+}
+.scenario-box p { font-size: 14px; color: var(--text-dim); margin-bottom: 12px; }
+.scenario-choices { display: flex; flex-direction: column; gap: 8px; }
+.scenario-choice {
+  padding: 12px 16px;
+  background: var(--surface);
+  border: 2px solid var(--surface2);
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text);
+  text-align: left;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.2s;
+}
+.scenario-choice:hover { border-color: var(--gold); }
+.scenario-result {
+  margin-top: 12px;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 1.6;
+  display: none;
+}
+.scenario-result.show { display: block; animation: pop 0.3s ease-out; }
+
+/* ── Compound Interest Calculator ── */
+.calc-box {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin: 16px 0;
+}
+.calc-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  gap: 12px;
+}
+.calc-row label {
+  font-size: 14px;
+  color: var(--text-dim);
+  flex-shrink: 0;
+}
+.calc-input {
+  background: var(--surface2);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: var(--text);
+  font-size: 16px;
+  width: 120px;
+  text-align: right;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+}
+.calc-input:focus { border-color: var(--gold); }
+.calc-result {
+  text-align: center;
+  padding: 16px;
+  background: rgba(255,215,0,0.08);
+  border-radius: 12px;
+  margin-top: 8px;
+}
+.calc-result .big-number {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 36px;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+.calc-result .detail {
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+/* ── Idea Lab ── */
+.idea-lab {
+  background: linear-gradient(135deg, rgba(68,138,255,0.08), rgba(179,136,255,0.08));
+  border-radius: var(--radius);
+  padding: 24px;
+  margin: 16px 0;
+  border: 1px solid rgba(68,138,255,0.15);
+}
+.idea-textarea {
+  width: 100%;
+  min-height: 120px;
+  background: var(--surface);
+  border: 2px solid var(--surface2);
+  border-radius: 12px;
+  padding: 16px;
+  color: var(--text);
+  font-size: 15px;
+  font-family: 'Inter', sans-serif;
+  resize: vertical;
+  outline: none;
+  margin: 12px 0;
+  line-height: 1.6;
+}
+.idea-textarea:focus { border-color: var(--blue); }
+.idea-textarea::placeholder { color: var(--text-dim); }
+
+.idea-response {
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 12px;
+  display: none;
+  animation: pop 0.3s ease-out;
+  line-height: 1.7;
+}
+.idea-response.show { display: block; }
+.idea-response h4 { color: var(--blue); margin-bottom: 8px; }
+.idea-response p { font-size: 14px; color: var(--text-dim); margin-bottom: 8px; }
+.idea-response .idea-tag {
+  display: inline-block;
+  padding: 4px 10px;
+  background: rgba(68,138,255,0.15);
+  color: var(--blue);
+  border-radius: 20px;
+  font-size: 12px;
+  margin: 2px 4px 2px 0;
+}
+
+/* ── Bottom Nav ── */
+.bottom-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: rgba(15,14,23,0.95);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--surface2);
+  display: none;
+  justify-content: space-around;
+  padding: 8px 0 max(8px, env(safe-area-inset-bottom));
+  z-index: 1000;
+}
+.bottom-nav.visible { display: flex; }
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 16px;
+  cursor: pointer;
+  color: var(--text-dim);
+  font-size: 11px;
+  font-family: 'Fredoka', sans-serif;
+  transition: color 0.2s;
+  background: none;
+  border: none;
+}
+.nav-item:hover, .nav-item.active { color: var(--gold); }
+.nav-item .nav-icon { font-size: 22px; }
+
+/* ── Confetti ── */
+.confetti {
+  position: fixed;
+  top: -10px;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  pointer-events: none;
+  z-index: 9999;
+  animation: confetti-fall 2s ease-out forwards;
+}
+
+/* ── Lesson Nav ── */
+.lesson-nav {
+  display: flex;
+  gap: 12px;
+  margin: 24px 0;
+  padding-bottom: 80px;
+}
+.lesson-nav .btn { flex: 1; justify-content: center; }
+
+/* ── Back button ── */
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-dim);
+  font-size: 14px;
+  cursor: pointer;
+  margin-bottom: 16px;
+  padding: 6px 0;
+  background: none;
+  border: none;
+  font-family: 'Inter', sans-serif;
+  transition: color 0.2s;
+}
+.back-btn:hover { color: var(--gold); }
+
+/* ── Achievements popup ── */
+.achievement-toast {
+  position: fixed;
+  top: 60px; left: 50%;
+  transform: translateX(-50%);
+  background: var(--surface);
+  border: 2px solid var(--gold);
+  border-radius: 16px;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 2000;
+  animation: pop 0.4s ease-out;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  max-width: 90%;
+}
+.achievement-toast .ach-icon { font-size: 32px; }
+.achievement-toast .ach-info h4 {
+  font-size: 14px;
+  color: var(--gold);
+  margin-bottom: 2px;
+}
+.achievement-toast .ach-info p {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+/* ── Progress bar in lessons ── */
+.lesson-progress {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 20px;
+}
+.lesson-progress .step {
+  flex: 1;
+  height: 4px;
+  background: var(--surface2);
+  border-radius: 2px;
+  transition: background 0.3s;
+}
+.lesson-progress .step.done { background: var(--gold); }
+.lesson-progress .step.active { background: var(--gold); opacity: 0.6; }
+
+/* ── Get Started cards ── */
+.start-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  transition: all 0.2s;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+.start-card:hover { border-color: var(--surface2); }
+.start-card .start-icon {
+  font-size: 32px;
+  flex-shrink: 0;
+}
+.start-card h3 { font-size: 16px; margin-bottom: 4px; }
+.start-card p { font-size: 13px; color: var(--text-dim); line-height: 1.5; }
+
+/* ── Mobile padding ── */
+@media (max-width: 480px) {
+  .screen { padding: 16px; padding-top: 56px; }
+  .welcome-title { font-size: 34px; }
+  .welcome-coin { font-size: 64px; }
+  #welcome-screen { padding-top: 16px; }
+}
+
+/* ── Tabs ── */
+.tab-row {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  margin-bottom: 16px;
+  -webkit-overflow-scrolling: touch;
+}
+.tab-btn {
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  background: var(--surface);
+  color: var(--text-dim);
+  border: 1px solid var(--surface2);
+  transition: all 0.2s;
+}
+.tab-btn:hover, .tab-btn.active {
+  background: var(--gold);
+  color: #1a1a2e;
+  border-color: var(--gold);
+}
+
+/* ── Comparison table ── */
+.compare-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 13px;
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 12px 0;
+}
+.compare-table th {
+  background: var(--surface2);
+  padding: 10px 12px;
+  text-align: left;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+.compare-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--surface2);
+  color: var(--text-dim);
+}
+.compare-table tr:last-child td { border-bottom: none; }
+
+/* ── Slider ── */
+.slider-container {
+  margin: 12px 0;
+}
+.slider-container label {
+  font-size: 14px;
+  color: var(--text-dim);
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.slider-container label span { color: var(--gold); font-weight: 600; }
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  background: var(--surface2);
+  border-radius: 3px;
+  outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px; height: 22px;
+  background: var(--gold);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* ── Passive Income ── */
+.income-stream {
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.income-stream .stream-icon { font-size: 28px; }
+.income-stream h4 { font-size: 15px; margin-bottom: 2px; }
+.income-stream p { font-size: 13px; color: var(--text-dim); }
+.difficulty-badge {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-weight: 600;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.diff-easy { background: rgba(0,230,118,0.15); color: var(--green); }
+.diff-med { background: rgba(255,171,64,0.15); color: var(--orange); }
+.diff-hard { background: rgba(255,82,82,0.15); color: var(--red); }
+</style>
+</head>
+<body>
+
+<!-- XP BAR -->
+<div id="xp-bar-container">
+  <div class="xp-avatar-small" id="nav-avatar"></div>
+  <div class="xp-level" id="nav-level">Lv 1</div>
+  <div class="xp-bar-track"><div class="xp-bar-fill" id="xp-fill" style="width:0%"></div></div>
+  <div class="xp-text" id="xp-text">0 / 100 XP</div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav" id="bottom-nav">
+  <button class="nav-item active" onclick="showScreen('map')"><span class="nav-icon">🗺️</span>Quests</button>
+  <button class="nav-item" onclick="showScreen('idea-lab')"><span class="nav-icon">💡</span>Idea Lab</button>
+  <button class="nav-item" onclick="showScreen('achievements')"><span class="nav-icon">🏆</span>Badges</button>
+  <button class="nav-item" onclick="showScreen('get-started')"><span class="nav-icon">🚀</span>Start</button>
+</div>
+
+<!-- ═══════════ WELCOME SCREEN ═══════════ -->
+<div class="screen active" id="welcome-screen">
+  <div class="welcome-stars" id="stars"></div>
+  <div class="welcome-coin">🪙</div>
+  <h1 class="welcome-title">Money Quest</h1>
+  <p class="welcome-subtitle">Your financial adventure starts here. Learn about money, investing, and building wealth — one quest at a time. No judgment, no boring lectures. Just real knowledge that sets you up for life.</p>
+
+  <p style="color:var(--text-dim); font-size:14px; margin-bottom:12px;">Choose your character:</p>
+  <div class="avatar-picker">
+    <div class="avatar-option" onclick="selectAvatar(this)" data-avatar="🧙">🧙</div>
+    <div class="avatar-option" onclick="selectAvatar(this)" data-avatar="🦊">🦊</div>
+    <div class="avatar-option" onclick="selectAvatar(this)" data-avatar="🐉">🐉</div>
+    <div class="avatar-option" onclick="selectAvatar(this)" data-avatar="🦁">🦁</div>
+    <div class="avatar-option" onclick="selectAvatar(this)" data-avatar="🦅">🦅</div>
+    <div class="avatar-option" onclick="selectAvatar(this)" data-avatar="🐺">🐺</div>
+    <div class="avatar-option" onclick="selectAvatar(this)" data-avatar="🦉">🦉</div>
+    <div class="avatar-option" onclick="selectAvatar(this)" data-avatar="🐙">🐙</div>
+  </div>
+
+  <input class="name-input" id="player-name" type="text" placeholder="Enter your name..." maxlength="20">
+
+  <button class="btn btn-gold" onclick="startAdventure()">⚔️ Begin Your Quest</button>
+</div>
+
+<!-- ═══════════ QUEST MAP ═══════════ -->
+<div class="screen" id="map-screen">
+  <div class="map-header">
+    <h2>🗺️ Quest Map</h2>
+    <p>Tap a quest to begin learning</p>
+  </div>
+  <div class="quest-path" id="quest-path">
+    <!-- Filled by JS -->
+  </div>
+  <div style="height:90px"></div>
+</div>
+
+<!-- ═══════════ LESSON SCREEN ═══════════ -->
+<div class="screen" id="lesson-screen">
+  <button class="back-btn" onclick="showScreen('map')">← Back to Map</button>
+  <div id="lesson-content">
+    <!-- Filled by JS -->
+  </div>
+</div>
+
+<!-- ═══════════ IDEA LAB ═══════════ -->
+<div class="screen" id="idea-lab-screen">
+  <div class="lesson-header">
+    <span class="lesson-emoji">💡</span>
+    <h2>Idea Lab</h2>
+    <p>Got a money idea? Tell me about it — no judgment, just honest guidance.</p>
+  </div>
+
+  <div class="idea-lab">
+    <p style="font-size:14px; color:var(--text-dim); margin-bottom:4px;">What's your idea? It could be anything:</p>
+    <ul style="font-size:13px; color:var(--text-dim); margin-bottom:8px; list-style:none;">
+      <li>💰 A business you want to start</li>
+      <li>📈 An investment you're thinking about</li>
+      <li>🏠 Buying a house or property</li>
+      <li>🎓 Whether to go to college</li>
+      <li>🤔 Any money question at all</li>
+    </ul>
+    <textarea class="idea-textarea" id="idea-input" placeholder="Example: I want to start selling custom phone cases on Etsy...&#10;&#10;Or: Should I put my savings in crypto?&#10;&#10;Or: I have $500 and don't know what to do with it..."></textarea>
+    <button class="btn btn-gold" onclick="analyzeIdea()" style="width:100%; justify-content:center;">🔮 Analyze My Idea</button>
+
+    <div class="idea-response" id="idea-response"></div>
+  </div>
+  <div style="height:90px"></div>
+</div>
+
+<!-- ═══════════ ACHIEVEMENTS ═══════════ -->
+<div class="screen" id="achievements-screen">
+  <div class="lesson-header">
+    <span class="lesson-emoji">🏆</span>
+    <h2>Your Badges</h2>
+    <p>Earn badges by completing quests and quizzes</p>
+  </div>
+  <div id="badges-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px; padding-bottom:90px;">
+    <!-- Filled by JS -->
+  </div>
+</div>
+
+<!-- ═══════════ GET STARTED ═══════════ -->
+<div class="screen" id="get-started-screen">
+  <div class="lesson-header">
+    <span class="lesson-emoji">🚀</span>
+    <h2>Ready to Start?</h2>
+    <p>Here's how to take your first real step</p>
+  </div>
+
+  <div class="lesson-card">
+    <h3>📋 Your Pre-Flight Checklist</h3>
+    <p>Before investing a single dollar, make sure you have these basics covered:</p>
+    <div class="callout" style="margin-top:12px;">
+      <div class="callout-label">Step 1: Emergency Fund</div>
+      <p>Save 3-6 months of expenses in a high-yield savings account. This is your safety net — don't invest until you have this. Think of it like having a full health bar before going into a boss fight.</p>
+    </div>
+    <div class="callout callout-green">
+      <div class="callout-label">Step 2: Kill High-Interest Debt</div>
+      <p>If you have credit card debt (usually 20%+ interest), pay that off first. No investment consistently beats 20% returns, so paying off debt IS your best investment.</p>
+    </div>
+    <div class="callout callout-blue">
+      <div class="callout-label">Step 3: Start Small</div>
+      <p>You don't need thousands to start. Many platforms let you begin with $1. The goal isn't the amount — it's building the habit and starting early so compound interest works for you.</p>
+    </div>
+  </div>
+
+  <h3 style="margin: 20px 0 12px; font-size:18px;">🛠️ Beginner-Friendly Platforms</h3>
+
+  <div class="start-card" onclick="window.open('https://robinhood.com','_blank')">
+    <div class="start-icon">📱</div>
+    <div>
+      <h3>Robinhood</h3>
+      <p>Great for beginners. No minimum, fractional shares, simple interface. Start with an index fund like VOO (S&P 500) or VTI (total market).</p>
+    </div>
+  </div>
+  <div class="start-card" onclick="window.open('https://www.fidelity.com','_blank')">
+    <div class="start-icon">🏦</div>
+    <div>
+      <h3>Fidelity</h3>
+      <p>Zero-fee index funds, great research tools, and excellent customer service. Perfect for opening a Roth IRA (your future self will thank you).</p>
+    </div>
+  </div>
+  <div class="start-card" onclick="window.open('https://investor.vanguard.com','_blank')">
+    <div class="start-icon">🏛️</div>
+    <div>
+      <h3>Vanguard</h3>
+      <p>The OG of index fund investing. Founded by Jack Bogle himself. Low fees, investor-owned, built for long-term wealth building.</p>
+    </div>
+  </div>
+  <div class="start-card">
+    <div class="start-icon">💳</div>
+    <div>
+      <h3>High-Yield Savings</h3>
+      <p>Before investing, park your emergency fund in a HYSA (like Marcus, Ally, or SoFi). Earns 4-5% vs the 0.01% at most big banks.</p>
+    </div>
+  </div>
+
+  <div class="lesson-card" style="margin-top:16px;">
+    <h3>🎯 The Simplest Possible Plan</h3>
+    <p style="margin-bottom:12px;">If all of this still feels overwhelming, here is literally all you need to do:</p>
+    <div class="callout">
+      <p><strong>1.</strong> Open a Roth IRA at Fidelity or Vanguard<br>
+      <strong>2.</strong> Set up automatic monthly deposits (even $25/month)<br>
+      <strong>3.</strong> Buy a total market index fund (like VTI or FZROX)<br>
+      <strong>4.</strong> Don't touch it. Let it grow. Check it once a quarter max.<br><br>
+      That's it. Seriously. You'll outperform most professional investors over time.</p>
+    </div>
+  </div>
+
+  <div style="height:90px"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════
+
+const QUESTS = [
+  {
+    id: 'money-basics',
+    icon: '🪙',
+    iconBg: 'linear-gradient(135deg, #ffd700, #ffab40)',
+    title: 'What Even Is Money?',
+    desc: 'The foundation of everything',
+    xp: 50,
+    content: () => `
+      <div class="lesson-header">
+        <span class="lesson-emoji">🪙</span>
+        <h2>What Even Is Money?</h2>
+        <p>Quest 1 — Let's start at the very beginning</p>
+      </div>
+
+      <div class="lesson-card">
+        <h3>💭 Money is just a story we all agree on</h3>
+        <p>Here's something wild: money only works because everyone agrees it works. A $100 bill is just paper with special ink. But because we all agree it has value, it does. Money is really just a tool for trading your time and skills for things you need and want.</p>
+      </div>
+
+      <div class="lesson-card">
+        <h3>🔄 The Money Cycle</h3>
+        <p>Money flows in a cycle, and understanding this cycle is the key to everything:</p>
+        <div class="analogy-box">
+          <div class="analogy-label">🎮 Think of it like a video game</div>
+          <p>You <strong>earn</strong> gold (income) → you <strong>spend</strong> gold on gear and potions (expenses) → you <strong>save</strong> gold for future boss fights (savings) → you <strong>invest</strong> gold to build farms that generate more gold while you sleep (investing).</p>
+        </div>
+        <p>Most people only know about earn and spend. The real game starts when you learn save and invest.</p>
+      </div>
+
+      <div class="lesson-card">
+        <h3>🧮 The 3 Rules of Money</h3>
+        <ul>
+          <li><strong>Rule 1: Spend less than you earn.</strong> This sounds simple but it's the foundation. Without this, nothing else works.</li>
+          <li><strong>Rule 2: Make your money work for you.</strong> Every dollar you save can be a little worker that earns more dollars while you do other things.</li>
+          <li><strong>Rule 3: Time is your biggest advantage.</strong> The earlier you start, the more powerful your money becomes. A 20-year-old who invests $100/month will have MORE than a 30-year-old who invests $200/month. Time literally is money.</li>
+        </ul>
+      </div>
+
+      ${makeQuiz('money-basics', 'If you start investing $100/month at age 20 vs $200/month at age 30 (both until age 65, 10% avg return), who has more?', [
+        { text: 'The $200/month person — they invested more total money', correct: false },
+        { text: 'The $100/month person — they started 10 years earlier', correct: true },
+        { text: 'They end up about the same', correct: false },
+      ], 'The 20-year-old ends up with about $950k vs $760k for the 30-year-old — despite investing HALF as much per month! Those 10 extra years of compound growth are incredibly powerful. This is why starting early matters more than the amount.')}
+
+      <div class="lesson-card">
+        <h3>💡 Money is a tool, not the goal</h3>
+        <p>Here's the most important thing to understand: money is a <em>vehicle</em>. It takes you somewhere. The destination is up to you — freedom, security, experiences, helping others, or whatever matters most to you.</p>
+        <div class="callout">
+          <div class="callout-label">Real Talk</div>
+          <p>There's no single "right" way to use money. Some people want to retire at 35. Others want to build a business. Others want to travel the world. All valid. The goal of this quest is to make sure you understand your options so YOU can decide what's right for you.</p>
+        </div>
+      </div>
+    `
+  },
+  {
+    id: 'compound-interest',
+    icon: '🌱',
+    iconBg: 'linear-gradient(135deg, #00e676, #69f0ae)',
+    title: 'The Magic of Compound Interest',
+    desc: 'The most powerful force in the universe',
+    xp: 75,
+    content: () => `
+      <div class="lesson-header">
+        <span class="lesson-emoji">🌱</span>
+        <h2>The 8th Wonder of the World</h2>
+        <p>Quest 2 — Einstein allegedly called compound interest "the most powerful force in the universe"</p>
+      </div>
+
+      <div class="lesson-card">
+        <h3>🧪 What is compound interest?</h3>
+        <p>Simple interest: you earn interest on your original money. Compound interest: you earn interest on your money AND on the interest you already earned. It's interest on interest on interest.</p>
+        <div class="analogy-box">
+          <div class="analogy-label">🎮 The Snowball Effect</div>
+          <p>Imagine rolling a snowball down a hill. At first it's tiny and slow. But as it rolls, it picks up more snow, gets bigger, and picks up even MORE snow because it's bigger. That's compound interest. Slow at first, then it goes wild.</p>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <h3>📊 See it for yourself</h3>
+        <p>Play with the numbers and watch the magic happen:</p>
+        <div class="calc-box">
+          <div class="calc-row">
+            <label>Starting Amount</label>
+            <div style="display:flex;align-items:center;gap:4px;"><span style="color:var(--text-dim)">$</span><input class="calc-input" type="number" id="calc-start" value="1000" onchange="updateCalc()"></div>
+          </div>
+          <div class="calc-row">
+            <label>Monthly Addition</label>
+            <div style="display:flex;align-items:center;gap:4px;"><span style="color:var(--text-dim)">$</span><input class="calc-input" type="number" id="calc-monthly" value="100" onchange="updateCalc()"></div>
+          </div>
+          <div class="slider-container">
+            <label>Years: <span id="calc-years-val">30</span></label>
+            <input type="range" id="calc-years" min="1" max="50" value="30" oninput="document.getElementById('calc-years-val').textContent=this.value; updateCalc()">
+          </div>
+          <div class="slider-container">
+            <label>Avg Return: <span id="calc-rate-val">10</span>%</label>
+            <input type="range" id="calc-rate" min="1" max="15" value="10" oninput="document.getElementById('calc-rate-val').textContent=this.value; updateCalc()">
+          </div>
+          <div class="calc-result">
+            <div class="big-number" id="calc-total">$0</div>
+            <div class="detail" id="calc-detail"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <h3>⏰ The Rule of 72</h3>
+        <p>Want a quick trick? Divide 72 by your interest rate to find out how long it takes to DOUBLE your money.</p>
+        <ul>
+          <li>At 10% return → 72 ÷ 10 = <strong>7.2 years</strong> to double</li>
+          <li>At 7% return → 72 ÷ 7 = <strong>~10 years</strong> to double</li>
+          <li>At 2% (savings account) → 72 ÷ 2 = <strong>36 years</strong> to double 😬</li>
+        </ul>
+        <div class="callout callout-green">
+          <div class="callout-label">Why this matters</div>
+          <p>At 10% average returns (the stock market's historical average), your money doubles roughly every 7 years. In 30 years, $10,000 becomes $170,000+. That's the snowball in action.</p>
+        </div>
+      </div>
+
+      ${makeQuiz('compound', 'You invest $5,000 once at age 18. At 10% average annual returns, roughly how much will you have at age 65?', [
+        { text: 'About $25,000', correct: false },
+        { text: 'About $100,000', correct: false },
+        { text: 'About $500,000', correct: true },
+        { text: 'About $50,000', correct: false },
+      ], '$5,000 growing at 10% for 47 years becomes roughly $500,000+. You only put in $5,000 once! The other $495,000+ is pure compound growth. This is why starting early — even with small amounts — is so powerful.')}
+    `
+  },
+  {
+    id: 'assets-liabilities',
+    icon: '⚖️',
+    iconBg: 'linear-gradient(135deg, #448aff, #82b1ff)',
+    title: 'Assets vs. Liabilities',
+    desc: 'Rich Dad\'s most important lesson',
+    xp: 75,
+    content: () => `
+      <div class="lesson-header">
+        <span class="lesson-emoji">⚖️</span>
+        <h2>Assets vs. Liabilities</h2>
+        <p>Quest 3 — The concept from Rich Dad Poor Dad that changes how you see money</p>
+      </div>
+
+      <div class="lesson-card">
+        <h3>📖 The Rich Dad Lesson</h3>
+        <p>In <em>Rich Dad Poor Dad</em>, Robert Kiyosaki shares the simplest and most powerful financial concept:</p>
+        <div class="callout">
+          <div class="callout-label">The #1 Rule</div>
+          <p><strong>Assets</strong> put money IN your pocket.<br><strong>Liabilities</strong> take money OUT of your pocket.<br><br>Rich people buy assets. Everyone else buys liabilities thinking they're assets.</p>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <h3>🏷️ Is it an asset or liability?</h3>
+        <div class="analogy-box">
+          <div class="analogy-label">🎮 Think of it this way</div>
+          <p>Assets are like farms in a strategy game — they produce resources over time. Liabilities are like debuffs — they drain your resources every turn. The goal is to build as many farms as possible while minimizing debuffs.</p>
+        </div>
+        <table class="compare-table">
+          <tr><th>Assets (Money IN) 💰</th><th>Liabilities (Money OUT) 💸</th></tr>
+          <tr><td>Stocks & index funds</td><td>Car payment</td></tr>
+          <tr><td>Rental property</td><td>Credit card debt</td></tr>
+          <tr><td>A business you own</td><td>Subscriptions you don't use</td></tr>
+          <tr><td>Bonds / CDs</td><td>Brand new car (loses value fast)</td></tr>
+          <tr><td>Skills that earn income</td><td>Expensive clothes you rarely wear</td></tr>
+        </table>
+      </div>
+
+      ${makeScenario('asset-scenario', '🤔 Your friend brags about their brand new $40,000 car. Is the car an asset or a liability?',
+        [
+          { text: "Asset — it's worth $40,000!", result: "Actually, the car is a liability. The moment you drive it off the lot, it loses 20-30% of its value. Plus you're paying insurance, gas, maintenance, and probably a car payment with interest. A car gets you from A to B (useful!) but it's draining money every month, not making you any. A used car for $10-15k does the same job and the $25k difference invested could grow to $200k+ over 20 years.", isGood: false },
+          { text: "Liability — it costs money every month and loses value", result: "Exactly right! A new car loses 20-30% of its value immediately, plus ongoing costs for payments, insurance, gas, and maintenance. It's useful for transportation, but it's taking money OUT of your pocket every month. A solid used car does the same job — and the money you save could be invested and grow for years.", isGood: true },
+          { text: "It depends on whether they paid cash", result: "Paying cash is better than a loan (no interest), but the car is still a liability either way. Even paid-off cars cost money for insurance, maintenance, and gas — and they lose value over time. The only car that's an asset is one that makes you money (like an Uber driver's car).", isGood: false },
+        ]
+      )}
+
+      <div class="lesson-card">
+        <h3>🧠 The Mindset Shift</h3>
+        <p>Before you buy something, ask yourself:</p>
+        <ul>
+          <li>"Will this put money in my pocket or take money out?"</li>
+          <li>"Could I use this money to buy an asset instead?"</li>
+          <li>"Do I need this, or do I just want it right now?"</li>
+        </ul>
+        <p style="margin-top:8px;">This doesn't mean never buy fun stuff! It means be intentional. Buy the things that truly make you happy, skip the rest, and put that saved money to work.</p>
+      </div>
+
+      ${makeQuiz('assets-q', 'Which of these is an example of buying an asset?', [
+        { text: 'Financing the newest iPhone', correct: false },
+        { text: 'Buying $200 of an S&P 500 index fund', correct: true },
+        { text: 'Getting a gym membership', correct: false },
+        { text: 'Leasing a luxury apartment', correct: false },
+      ], 'Index funds are assets — they grow in value and pay dividends, putting money IN your pocket over time. The others all take money OUT (though a gym membership is great for your health, it\'s still an expense, not an investment).')}
+    `
+  },
+  {
+    id: 'investing-101',
+    icon: '📈',
+    iconBg: 'linear-gradient(135deg, #b388ff, #ea80fc)',
+    title: 'Investing 101',
+    desc: 'Stocks, bonds, and index funds explained simply',
+    xp: 100,
+    content: () => `
+      <div class="lesson-header">
+        <span class="lesson-emoji">📈</span>
+        <h2>Investing 101</h2>
+        <p>Quest 4 — What the heck are stocks, bonds, and index funds?</p>
+      </div>
+
+      <div class="lesson-card">
+        <h3>📊 Stocks = Owning a piece of a company</h3>
+        <p>When you buy a stock, you literally own a tiny piece of that company. If Apple has 16 billion shares and you buy 1, you own 1/16,000,000,000th of Apple. Tiny? Yes. But you still get a share of their profits.</p>
+        <div class="analogy-box">
+          <div class="analogy-label">🎮 Think of it like this</div>
+          <p>Buying stocks is like buying a piece of someone's lemonade stand. If the stand does well and sells tons of lemonade, your piece becomes worth more AND you might get a cut of the profits (called a <strong>dividend</strong>).</p>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <h3>🏦 Bonds = Lending money to get it back with interest</h3>
+        <p>When you buy a bond, you're lending money to a company or the government. They promise to pay you back after a set time, plus interest.</p>
+        <ul>
+          <li><strong>Lower risk</strong> than stocks (you usually get your money back)</li>
+          <li><strong>Lower reward</strong> too (usually 3-5% returns)</li>
+          <li>Think of them as the <strong>safe, steady</strong> option</li>
+        </ul>
+        <div class="analogy-box">
+          <div class="analogy-label">🎮 Video game analogy</div>
+          <p>Bonds are like putting gold in the bank in an RPG — safe, small steady interest. Stocks are like investing in a merchant caravan — higher potential profit but the road has bandits.</p>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <h3>🎯 Index Funds = The cheat code</h3>
+        <p>This is the big one. An index fund is a basket that holds hundreds or thousands of stocks at once. Instead of trying to pick the winning stock, you just buy ALL of them.</p>
+        <div class="callout">
+          <div class="callout-label">Jack Bogle's Big Insight</div>
+          <p>Vanguard founder Jack Bogle proved that trying to pick individual stocks almost never beats just owning the whole market. Over any 20-year period, about 90% of professional stock pickers LOSE to a simple index fund. So why try to beat the market when you can just own it?</p>
+        </div>
+        <ul>
+          <li><strong>S&P 500 index fund</strong> (like VOO) — owns the 500 biggest US companies</li>
+          <li><strong>Total market fund</strong> (like VTI) — owns basically EVERY US company</li>
+          <li><strong>Avg return: ~10%/year</strong> over long periods (before inflation)</li>
+          <li><strong>Super low fees</strong> — like $3/year on a $10,000 investment</li>
+        </ul>
+      </div>
+
+      <div class="lesson-card">
+        <h3>📋 Quick Comparison</h3>
+        <table class="compare-table">
+          <tr><th>Type</th><th>Risk</th><th>Avg Return</th><th>Best For</th></tr>
+          <tr><td>Savings Acct</td><td>Very Low</td><td>4-5%</td><td>Emergency fund</td></tr>
+          <tr><td>Bonds</td><td>Low</td><td>3-5%</td><td>Stability</td></tr>
+          <tr><td>Index Funds</td><td>Medium</td><td>8-10%</td><td>Long-term growth</td></tr>
+          <tr><td>Individual Stocks</td><td>High</td><td>Varies wildly</td><td>Experienced investors</td></tr>
+          <tr><td>Crypto</td><td>Very High</td><td>?????</td><td>Speculation</td></tr>
+        </table>
+      </div>
+
+      ${makeQuiz('invest-q', 'According to decades of data, what beats most professional money managers over 20+ years?', [
+        { text: 'Picking individual stocks carefully', correct: false },
+        { text: 'A simple S&P 500 index fund', correct: true },
+        { text: 'Actively managed mutual funds', correct: false },
+        { text: 'Day trading', correct: false },
+      ], 'Over any 20-year period, about 90% of professional fund managers fail to beat a simple index fund. Jack Bogle (Vanguard\'s founder) built his entire philosophy on this: don\'t try to beat the market, just own it. Low fees + time + diversification = wealth.')}
+    `
+  },
+  {
+    id: 'ways-to-invest',
+    icon: '🎯',
+    iconBg: 'linear-gradient(135deg, #ff80ab, #ff4081)',
+    title: 'All the Ways to Invest',
+    desc: 'Real estate, retirement accounts, and more',
+    xp: 100,
+    content: () => `
+      <div class="lesson-header">
+        <span class="lesson-emoji">🎯</span>
+        <h2>All the Ways to Invest</h2>
+        <p>Quest 5 — Your investment menu, explained</p>
+      </div>
+
+      <div class="lesson-card">
+        <h3>🏠 Real Estate</h3>
+        <p>Buying property to live in, rent out, or flip. Can be great for building wealth but requires more money upfront and more work than stocks.</p>
+        <ul>
+          <li><strong>Pros:</strong> Tangible asset, rental income, tax benefits, leverage</li>
+          <li><strong>Cons:</strong> Requires big down payment, maintenance headaches, not liquid</li>
+          <li><strong>Easy way in:</strong> REITs (Real Estate Investment Trusts) let you invest in real estate through the stock market with as little as $1</li>
+        </ul>
+      </div>
+
+      <div class="lesson-card">
+        <h3>🏦 Retirement Accounts (The Tax Hack)</h3>
+        <p>The government actually WANTS you to invest for retirement, so they give you tax breaks to do it. Take advantage of this.</p>
+        <div class="callout callout-green">
+          <div class="callout-label">Roth IRA — Your New Best Friend</div>
+          <p>Put money in AFTER tax → it grows tax-free → take it out tax-free in retirement. If you're young and in a low tax bracket now, this is one of the best deals in finance. Max contribution: $7,000/year (2024). Your future self will literally thank you.</p>
+        </div>
+        <div class="callout callout-blue">
+          <div class="callout-label">401(k) — Free money from your job</div>
+          <p>If your employer matches your 401(k) contributions, that is FREE MONEY. If they match 50% up to 6% of your salary, and you don't contribute at least 6%, you are literally turning down free money. Always get the full match.</p>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <h3>🪙 Crypto</h3>
+        <p>Let's be real about crypto:</p>
+        <ul>
+          <li>It's highly volatile — it can go up 100% or drop 80% in months</li>
+          <li>It's speculative — nobody really knows what it'll be worth</li>
+          <li>It's not inherently bad, but it's NOT a replacement for real investing</li>
+          <li>If you want exposure, limit it to 5-10% max of your portfolio</li>
+        </ul>
+        <div class="callout">
+          <div class="callout-label">The Honest Take</div>
+          <p>Some people have made life-changing money in crypto. Many more have lost life-changing money. Don't invest more than you can afford to lose completely, and don't let crypto be your ONLY investment strategy.</p>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <h3>🏢 Starting a Business</h3>
+        <p>The highest risk AND highest potential reward. Building a business is investing your time, skills, and money into something you create.</p>
+        <ul>
+          <li>Most small businesses fail — but the ones that succeed can generate incredible wealth</li>
+          <li>You don't have to quit your job to start — side businesses are valid</li>
+          <li>Skills you build in a failed business are still valuable forever</li>
+        </ul>
+      </div>
+
+      ${makeScenario('invest-scenario', "🎮 You just got your first job making $50,000/year. Your employer offers a 401(k) with 100% match up to 4%. What's your move?",
+        [
+          { text: "Skip the 401(k), I want my full paycheck", result: "By skipping the match, you're leaving $2,000/year of free money on the table. Over 30 years at 10% returns, that's over $360,000 you missed out on — money your employer was literally trying to give you. Always get the full match!", isGood: false },
+          { text: "Contribute at least 4% to get the full match", result: "Smart move! You contribute 4% ($2,000/year) and your employer matches 100% — that's an instant 100% return on your money before it even starts growing. Over 30 years at 10% returns, that match alone could be worth $360,000+. Then consider opening a Roth IRA for additional investing.", isGood: true },
+          { text: "Put everything into crypto instead", result: "While crypto can be part of a portfolio, passing up a 401(k) match for crypto is like turning down a guaranteed 100% return for a gamble. The employer match is FREE money — a guaranteed instant double. Get the match first, then you can put some of your remaining money wherever you want.", isGood: false },
+        ]
+      )}
+    `
+  },
+  {
+    id: 'passive-income',
+    icon: '😴',
+    iconBg: 'linear-gradient(135deg, #ffab40, #ff9100)',
+    title: 'Passive Income Streams',
+    desc: 'Making money while you sleep',
+    xp: 100,
+    content: () => `
+      <div class="lesson-header">
+        <span class="lesson-emoji">😴</span>
+        <h2>Passive Income</h2>
+        <p>Quest 6 — Build systems that earn while you sleep</p>
+      </div>
+
+      <div class="lesson-card">
+        <h3>💤 What is passive income?</h3>
+        <p>Passive income is money you earn without actively trading your time for it. You put in work upfront to build something, and then it keeps paying you.</p>
+        <div class="callout">
+          <div class="callout-label">Important reality check</div>
+          <p>"Passive" doesn't mean "zero effort." Every passive income stream requires upfront work, learning, or capital. It's more like <strong>"front-loaded work"</strong> — you work hard now so future-you earns while sleeping.</p>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <h3>💰 Passive Income Streams</h3>
+
+        <div class="income-stream">
+          <div class="stream-icon">📈</div>
+          <div>
+            <h4>Dividend Investing</h4>
+            <p>Own stocks that pay you quarterly just for holding them</p>
+          </div>
+          <span class="difficulty-badge diff-easy">Easy</span>
+        </div>
+
+        <div class="income-stream">
+          <div class="stream-icon">🏠</div>
+          <div>
+            <h4>Rental Property</h4>
+            <p>Buy property, rent it out, collect monthly rent checks</p>
+          </div>
+          <span class="difficulty-badge diff-hard">Hard</span>
+        </div>
+
+        <div class="income-stream">
+          <div class="stream-icon">📚</div>
+          <div>
+            <h4>Digital Products</h4>
+            <p>Create once (ebook, course, template), sell forever</p>
+          </div>
+          <span class="difficulty-badge diff-med">Medium</span>
+        </div>
+
+        <div class="income-stream">
+          <div class="stream-icon">🎵</div>
+          <div>
+            <h4>Content Creation</h4>
+            <p>YouTube, blog, podcast — build audience, earn from ads/sponsors</p>
+          </div>
+          <span class="difficulty-badge diff-med">Medium</span>
+        </div>
+
+        <div class="income-stream">
+          <div class="stream-icon">💻</div>
+          <div>
+            <h4>Software / Apps</h4>
+            <p>Build an app or tool people pay to use monthly</p>
+          </div>
+          <span class="difficulty-badge diff-hard">Hard</span>
+        </div>
+
+        <div class="income-stream">
+          <div class="stream-icon">🏦</div>
+          <div>
+            <h4>High-Yield Savings</h4>
+            <p>Park cash in a HYSA earning 4-5% interest</p>
+          </div>
+          <span class="difficulty-badge diff-easy">Easy</span>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <h3>🎯 The Passive Income Ladder</h3>
+        <p>Start at the bottom and work your way up as you learn:</p>
+        <div class="callout callout-green">
+          <div class="callout-label">Level 1 — Zero effort start</div>
+          <p>High-yield savings account (HYSA). Just move your money from a regular bank to an HYSA and instantly earn 4-5% instead of 0.01%. That's passive income from day one.</p>
+        </div>
+        <div class="callout callout-blue">
+          <div class="callout-label">Level 2 — Set it and forget it</div>
+          <p>Index fund investing with automatic monthly deposits. Set up auto-invest and your money grows without you thinking about it. Dividends are bonus passive income.</p>
+        </div>
+        <div class="callout">
+          <div class="callout-label">Level 3 — Build something</div>
+          <p>Create a digital product, start a side business, or build a content platform. More upfront work, but potentially much higher income ceiling.</p>
+        </div>
+      </div>
+
+      ${makeQuiz('passive-q', 'What\'s the most realistic first step toward passive income for most people?', [
+        { text: 'Buy a rental property', correct: false },
+        { text: 'Start a YouTube channel', correct: false },
+        { text: 'Move savings to a high-yield savings account', correct: true },
+        { text: 'Create an app', correct: false },
+      ], 'A HYSA is the easiest first step — literally just move your money and start earning 4-5% instead of 0.01%. No skills needed, no risk, instant passive income. From there, you can level up to investing and eventually building something.')}
+    `
+  },
+  {
+    id: 'happy-money',
+    icon: '😊',
+    iconBg: 'linear-gradient(135deg, #69f0ae, #00e676)',
+    title: 'Spending Smart (Happy Money)',
+    desc: 'How to spend money in ways that actually make you happy',
+    xp: 75,
+    content: () => `
+      <div class="lesson-header">
+        <span class="lesson-emoji">😊</span>
+        <h2>Happy Money</h2>
+        <p>Quest 7 — Not all spending is bad. Learn to spend on what truly matters.</p>
+      </div>
+
+      <div class="lesson-card">
+        <h3>🧠 The Science of Spending</h3>
+        <p>The book <em>Happy Money</em> by Elizabeth Dunn and Michael Norton reveals that HOW you spend matters more than HOW MUCH. Some purchases make us happy for years; others give a quick thrill that fades fast.</p>
+      </div>
+
+      <div class="lesson-card">
+        <h3>✨ 5 Principles of Happy Spending</h3>
+
+        <div class="callout callout-green">
+          <div class="callout-label">1. Buy Experiences, Not Things</div>
+          <p>Experiences (travel, concerts, learning) create lasting memories and stories. Material things feel exciting for about 2 weeks, then become "just stuff." A $200 concert with friends will bring you more lasting joy than a $200 shirt.</p>
+        </div>
+
+        <div class="callout callout-blue">
+          <div class="callout-label">2. Make It a Treat</div>
+          <p>When you can have something anytime, it stops being special. That daily $6 latte? It becomes routine. But if you have it once a week as a Friday treat, it feels amazing every time. Scarcity creates appreciation.</p>
+        </div>
+
+        <div class="callout">
+          <div class="callout-label">3. Buy Time</div>
+          <p>Using money to free up your time is one of the best purchases you can make. Pay for the thing that saves you hours of stress. Your time is literally your life — buying it back is priceless.</p>
+        </div>
+
+        <div class="callout callout-green">
+          <div class="callout-label">4. Pay Now, Enjoy Later</div>
+          <p>Pre-paying for things (like a vacation booked months ahead) creates anticipation, which is itself a source of happiness. And when you get there, it feels "free." The opposite — buying now, paying later (credit cards) — creates stress and regret.</p>
+        </div>
+
+        <div class="callout callout-blue">
+          <div class="callout-label">5. Invest in Others</div>
+          <p>Spending money on other people or donating to causes you care about has been scientifically shown to increase happiness more than spending on yourself. It's one of the most consistent findings in happiness research.</p>
+        </div>
+      </div>
+
+      ${makeScenario('happy-scenario', '🎮 You just got a $500 bonus at work. Which option would likely make you happiest?',
+        [
+          { text: "Buy the latest gaming console", result: "A new console can be fun! But research shows the excitement of material purchases fades within weeks — it's called 'hedonic adaptation.' You get used to it and it becomes normal. After a month, it's just another thing in your room.", isGood: false },
+          { text: "Plan a weekend trip with your siblings", result: "Research consistently shows experiences with people we love create the most lasting happiness. You'll have stories, inside jokes, and memories that actually get BETTER over time (we tend to remember the highlights). This is peak 'happy money' spending.", isGood: true },
+          { text: "Put it all in savings", result: "Saving is great! But never spending on meaningful experiences can leave you feeling like you're just hoarding gold in a game you never play. The sweet spot is saving AND strategically spending on things that bring real, lasting joy. Maybe save $300 and spend $200 on something meaningful.", isGood: false },
+        ]
+      )}
+
+      <div class="lesson-card">
+        <h3>⚖️ The Balance</h3>
+        <p>This quest isn't saying "never buy anything fun." It's saying be intentional:</p>
+        <ul>
+          <li>Cut spending on things that don't genuinely make you happy</li>
+          <li>Redirect that money to things that DO (experiences, time, generosity)</li>
+          <li>And invest the rest so future-you has even more choices</li>
+        </ul>
+        <div class="analogy-box">
+          <div class="analogy-label">🎮 The happiness equation</div>
+          <p><strong>Happiness = Reality − Expectations</strong><br>The key isn't having more stuff. It's spending on the RIGHT stuff, appreciating what you have, and building a life where money serves YOU, not the other way around.</p>
+        </div>
+      </div>
+    `
+  },
+  {
+    id: 'big-picture',
+    icon: '🌟',
+    iconBg: 'linear-gradient(135deg, #ffd700, #ff6d00)',
+    title: 'The Big Picture',
+    desc: 'Putting it all together — your money philosophy',
+    xp: 150,
+    content: () => `
+      <div class="lesson-header">
+        <span class="lesson-emoji">🌟</span>
+        <h2>The Big Picture</h2>
+        <p>Final Quest — Everything you've learned, brought together</p>
+      </div>
+
+      <div class="lesson-card">
+        <h3>🗺️ Your Money Map</h3>
+        <p>You've learned a lot on this quest. Let's zoom out and see how it all fits together:</p>
+        <div class="callout">
+          <div class="callout-label">The Complete Picture</div>
+          <p>
+          <strong>1. Earn</strong> — Build skills, create value, grow your income<br>
+          <strong>2. Save</strong> — Spend less than you earn, build your safety net<br>
+          <strong>3. Invest</strong> — Make your money work for you (index funds, real estate, etc.)<br>
+          <strong>4. Protect</strong> — Emergency fund, avoid high-interest debt, insurance<br>
+          <strong>5. Enjoy</strong> — Spend intentionally on what truly makes you happy<br>
+          <strong>6. Give</strong> — Help others when you can (it makes you happier too)
+          </p>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <h3>📚 Wisdom from the Masters</h3>
+        <div class="callout">
+          <div class="callout-label">Jack Bogle (Vanguard founder)</div>
+          <p>"Don't look for the needle in the haystack. Just buy the haystack." — Own the whole market through index funds instead of trying to pick winners.</p>
+        </div>
+        <div class="callout callout-green">
+          <div class="callout-label">Robert Kiyosaki (Rich Dad Poor Dad)</div>
+          <p>"It's not how much money you make. It's how much money you keep, and how hard it works for you." — Focus on building assets, not just earning more.</p>
+        </div>
+        <div class="callout callout-blue">
+          <div class="callout-label">Warren Buffett</div>
+          <p>"The stock market is a device for transferring money from the impatient to the patient." — Long-term thinking always wins.</p>
+        </div>
+        <div class="callout">
+          <div class="callout-label">Morgan Housel (The Psychology of Money)</div>
+          <p>"The highest form of wealth is the ability to wake up every morning and say, 'I can do whatever I want today.'" — Financial freedom is about choices, not stuff.</p>
+        </div>
+      </div>
+
+      <div class="lesson-card">
+        <h3>💪 Your Action Plan</h3>
+        <p>You don't have to do everything at once. Here's a priority order:</p>
+        <ul>
+          <li><strong>Today:</strong> Open a high-yield savings account</li>
+          <li><strong>This month:</strong> Set up a budget (keep it simple — just track income vs spending)</li>
+          <li><strong>This quarter:</strong> Open a Roth IRA and start with even $25/month into an index fund</li>
+          <li><strong>This year:</strong> Build your emergency fund (3-6 months expenses)</li>
+          <li><strong>Ongoing:</strong> Keep learning, increase your income, increase your investments</li>
+        </ul>
+      </div>
+
+      <div class="lesson-card">
+        <h3>🎮 Remember</h3>
+        <div class="analogy-box">
+          <div class="analogy-label">The final truth about money</div>
+          <p>Money is not the goal. Money is XP that lets you unlock the life you want. Some people want to unlock early retirement. Some want to unlock a business. Some want to unlock freedom to travel. Some want to unlock the ability to help their family. All of those are valid quests.<br><br>The only wrong move is not understanding the game at all. And by completing these quests, you already understand more about money than most adults. <strong>You're ahead of the game.</strong></p>
+        </div>
+      </div>
+
+      ${makeQuiz('final-q', 'What is the single most important factor in building wealth over time?', [
+        { text: 'Having a high income', correct: false },
+        { text: 'Picking the right stocks', correct: false },
+        { text: 'Starting early and being consistent', correct: true },
+        { text: 'Getting lucky with crypto', correct: false },
+      ], 'Time and consistency beat everything else. A person who starts investing small amounts early and keeps going will almost always build more wealth than someone who earns more but starts late or is inconsistent. You don\'t need to be perfect. You just need to start and keep going.')}
+    `
+  }
+];
+
+const BADGES = [
+  { id: 'first-quest', name: 'First Steps', icon: '🐣', desc: 'Complete your first quest', condition: () => state.completed.length >= 1 },
+  { id: 'money-basics', name: 'Money Minded', icon: '🧠', desc: 'Learn what money really is', condition: () => state.completed.includes('money-basics') },
+  { id: 'compound', name: 'Snowball Starter', icon: '⛄', desc: 'Master compound interest', condition: () => state.completed.includes('compound-interest') },
+  { id: 'assets', name: 'Asset Hunter', icon: '🏹', desc: 'Learn assets vs liabilities', condition: () => state.completed.includes('assets-liabilities') },
+  { id: 'investor', name: 'Investor I', icon: '📊', desc: 'Complete Investing 101', condition: () => state.completed.includes('investing-101') },
+  { id: 'diversified', name: 'Diversified', icon: '🎯', desc: 'Learn all ways to invest', condition: () => state.completed.includes('ways-to-invest') },
+  { id: 'passive', name: 'Sleep Earner', icon: '😴', desc: 'Unlock passive income', condition: () => state.completed.includes('passive-income') },
+  { id: 'happy', name: 'Happy Spender', icon: '😊', desc: 'Master spending smart', condition: () => state.completed.includes('happy-money') },
+  { id: 'sage', name: 'Money Sage', icon: '🌟', desc: 'Complete the final quest', condition: () => state.completed.includes('big-picture') },
+  { id: 'quiz-ace', name: 'Quiz Ace', icon: '🎓', desc: 'Get 5 quiz answers right', condition: () => state.quizCorrect >= 5 },
+  { id: 'all-quests', name: 'Quest Master', icon: '👑', desc: 'Complete all quests', condition: () => state.completed.length >= QUESTS.length },
+  { id: 'idea-explorer', name: 'Idea Explorer', icon: '💡', desc: 'Use the Idea Lab', condition: () => state.ideasSubmitted >= 1 },
+];
+
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+
+let state = {
+  avatar: '',
+  name: '',
+  xp: 0,
+  level: 1,
+  completed: [],
+  quizCorrect: 0,
+  quizAnswered: [],
+  scenarioAnswered: [],
+  earnedBadges: [],
+  ideasSubmitted: 0,
+  started: false,
+};
+
+function saveState() {
+  localStorage.setItem('moneyquest', JSON.stringify(state));
+}
+
+function loadState() {
+  const s = localStorage.getItem('moneyquest');
+  if (s) {
+    const parsed = JSON.parse(s);
+    state = { ...state, ...parsed };
+  }
+}
+
+// ═══════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════
+
+function makeQuiz(id, question, options, explanation) {
+  const optionsHtml = options.map((o, i) => `
+    <button class="quiz-option" onclick="answerQuiz('${id}', ${i}, ${o.correct}, this)" ${state.quizAnswered.includes(id) ? 'disabled' : ''}>
+      ${o.text}
+    </button>
+  `).join('');
+
+  return `
+    <div class="quiz-container" id="quiz-${id}">
+      <div class="quiz-question">🧩 Quick Check: ${question}</div>
+      <div class="quiz-options">${optionsHtml}</div>
+      <div class="quiz-feedback" id="quiz-fb-${id}"></div>
+    </div>
+  `;
+}
+
+function makeScenario(id, question, choices) {
+  const choicesHtml = choices.map((c, i) => `
+    <button class="scenario-choice" onclick="answerScenario('${id}', ${i}, this)" ${state.scenarioAnswered.includes(id) ? 'disabled' : ''}>
+      ${c.text}
+    </button>
+  `).join('');
+
+  return `
+    <div class="scenario-box" id="scenario-${id}">
+      <h4>🎮 Decision Time</h4>
+      <p>${question}</p>
+      <div class="scenario-choices">${choicesHtml}</div>
+      <div class="scenario-result" id="scenario-result-${id}"></div>
+    </div>
+  `;
+}
+
+// ═══════════════════════════════════════
+// GAME LOGIC
+// ═══════════════════════════════════════
+
+function selectAvatar(el) {
+  document.querySelectorAll('.avatar-option').forEach(a => a.classList.remove('selected'));
+  el.classList.add('selected');
+  state.avatar = el.dataset.avatar;
+}
+
+function startAdventure() {
+  const name = document.getElementById('player-name').value.trim();
+  if (!state.avatar) { shakeElement('.avatar-picker'); return; }
+  if (!name) { shakeElement('.name-input'); return; }
+
+  state.name = name;
+  state.started = true;
+  saveState();
+
+  showScreen('map');
+  document.getElementById('xp-bar-container').classList.add('visible');
+  document.getElementById('bottom-nav').classList.add('visible');
+  updateXPBar();
+  spawnConfetti();
+}
+
+function shakeElement(sel) {
+  const el = document.querySelector(sel);
+  el.style.animation = 'none';
+  el.offsetHeight;
+  el.style.animation = 'shake 0.4s ease-out';
+  setTimeout(() => el.style.animation = '', 400);
+}
+
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const screen = document.getElementById(name + '-screen');
+  if (screen) {
+    screen.classList.add('active');
+    screen.style.animation = 'none';
+    screen.offsetHeight;
+    screen.style.animation = 'slideUp 0.4s ease-out';
+  }
+
+  // Update nav
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navMap = { map: 0, 'idea-lab': 1, achievements: 2, 'get-started': 3 };
+  if (navMap[name] !== undefined) {
+    document.querySelectorAll('.nav-item')[navMap[name]].classList.add('active');
+  }
+
+  if (name === 'map') renderMap();
+  if (name === 'achievements') renderBadges();
+  window.scrollTo(0, 0);
+}
+
+function renderMap() {
+  const path = document.getElementById('quest-path');
+  path.innerHTML = QUESTS.map((q, i) => {
+    const isCompleted = state.completed.includes(q.id);
+    const isLocked = i > 0 && !state.completed.includes(QUESTS[i-1].id) && !isCompleted;
+    const isCurrent = !isCompleted && !isLocked;
+
+    return `
+      <div class="quest-node ${isCompleted ? 'completed' : ''} ${isLocked ? 'locked' : ''} ${isCurrent ? 'current' : ''}"
+           onclick="${isLocked ? '' : `openQuest('${q.id}')`}">
+        <div class="quest-icon" style="background:${q.iconBg}">${q.icon}</div>
+        <div class="quest-info">
+          <h3>${q.title}</h3>
+          <p>${q.desc}</p>
+        </div>
+        ${isCompleted ? '<span class="quest-check">✓</span>' : `<span class="quest-xp">${isLocked ? '🔒' : '+' + q.xp + ' XP'}</span>`}
+      </div>
+    `;
+  }).join('');
+}
+
+function openQuest(id) {
+  const quest = QUESTS.find(q => q.id === id);
+  if (!quest) return;
+
+  const content = document.getElementById('lesson-content');
+  content.innerHTML = quest.content();
+
+  // Add complete button if not already completed
+  if (!state.completed.includes(id)) {
+    content.innerHTML += `
+      <div class="lesson-nav">
+        <button class="btn btn-gold" onclick="completeQuest('${id}')" style="flex:1; justify-content:center;">
+          ✅ Complete Quest (+${quest.xp} XP)
+        </button>
+      </div>
+    `;
+  } else {
+    content.innerHTML += `
+      <div class="lesson-nav">
+        <button class="btn btn-outline" onclick="showScreen('map')" style="flex:1; justify-content:center;">
+          ← Back to Map
+        </button>
+      </div>
+    `;
+  }
+
+  showScreen('lesson');
+  if (typeof updateCalc === 'function') updateCalc();
+}
+
+function completeQuest(id) {
+  const quest = QUESTS.find(q => q.id === id);
+  if (!quest || state.completed.includes(id)) return;
+
+  state.completed.push(id);
+  addXP(quest.xp);
+  saveState();
+  spawnConfetti();
+  checkBadges();
+  showScreen('map');
+}
+
+function addXP(amount) {
+  state.xp += amount;
+  const xpNeeded = state.level * 100;
+  while (state.xp >= xpNeeded) {
+    state.xp -= xpNeeded;
+    state.level++;
+  }
+  updateXPBar();
+  saveState();
+
+  // Show XP popup
+  const popup = document.createElement('div');
+  popup.className = 'xp-popup';
+  popup.textContent = `+${amount} XP`;
+  document.body.appendChild(popup);
+  setTimeout(() => popup.remove(), 1000);
+}
+
+function updateXPBar() {
+  const xpNeeded = state.level * 100;
+  const pct = (state.xp / xpNeeded) * 100;
+  document.getElementById('nav-avatar').textContent = state.avatar;
+  document.getElementById('nav-level').textContent = `Lv ${state.level}`;
+  document.getElementById('xp-fill').style.width = pct + '%';
+  document.getElementById('xp-text').textContent = `${state.xp} / ${xpNeeded} XP`;
+}
+
+// ── Quiz Logic ──
+function answerQuiz(id, idx, correct, btn) {
+  if (state.quizAnswered.includes(id)) return;
+  state.quizAnswered.push(id);
+
+  const container = document.getElementById('quiz-' + id);
+  const options = container.querySelectorAll('.quiz-option');
+  const fb = document.getElementById('quiz-fb-' + id);
+
+  options.forEach((opt, i) => {
+    opt.disabled = true;
+    // Find correct answer
+    const quest = QUESTS.find(q => q.content().includes(`quiz-${id}`));
+  });
+
+  if (correct) {
+    btn.classList.add('correct');
+    fb.className = 'quiz-feedback correct-fb show';
+    state.quizCorrect++;
+    addXP(15);
+  } else {
+    btn.classList.add('incorrect');
+    // Highlight correct answer
+    options.forEach(opt => {
+      if (opt.getAttribute('onclick').includes('true')) opt.classList.add('correct');
+    });
+    fb.className = 'quiz-feedback incorrect-fb show';
+  }
+
+  // Get explanation from the onclick attribute
+  const quizContainer = btn.closest('.quiz-container');
+  const explanation = quizContainer.dataset.explanation;
+
+  // Find the explanation by looking at the HTML content for this quiz
+  const lessonContent = document.getElementById('lesson-content').innerHTML;
+  const explanationMatch = lessonContent.match(new RegExp(`quiz-fb-${id}">[^<]*</div>`));
+
+  fb.textContent = correct ? '✅ ' : '❌ ';
+
+  // Pull explanation from surrounding content
+  const allContent = document.getElementById('lesson-content').innerHTML;
+  const fbEl = document.getElementById('quiz-fb-' + id);
+
+  // We already have the explanation in the content - let's grab it from our data
+  const questData = QUESTS.find(q => {
+    const html = q.content();
+    return html.includes(`quiz-${id}`);
+  });
+  if (questData) {
+    const html = questData.content();
+    const match = html.match(new RegExp(`answerQuiz\\('${id}'.*?'(.*?)'\\)`));
+  }
+
+  // Simpler approach: re-render to get explanation text
+  fb.innerHTML = correct ? '✅ Correct! ' : '❌ Not quite. ';
+
+  saveState();
+  checkBadges();
+}
+
+// We need to store explanations differently - let's use data attributes
+// Actually, let's refactor makeQuiz to include the explanation in the DOM
+const quizExplanations = {};
+
+// Override makeQuiz to store explanations
+const _origMakeQuiz = makeQuiz;
+window.makeQuiz = function(id, question, options, explanation) {
+  quizExplanations[id] = explanation;
+  return _origMakeQuiz(id, question, options, explanation);
+};
+
+// Update answerQuiz to use stored explanations
+const _origAnswerQuiz = answerQuiz;
+window.answerQuiz = function(id, idx, correct, btn) {
+  if (state.quizAnswered.includes(id)) return;
+  state.quizAnswered.push(id);
+
+  const container = document.getElementById('quiz-' + id);
+  const options = container.querySelectorAll('.quiz-option');
+  const fb = document.getElementById('quiz-fb-' + id);
+
+  options.forEach(opt => opt.disabled = true);
+
+  if (correct) {
+    btn.classList.add('correct');
+    fb.className = 'quiz-feedback correct-fb show';
+    state.quizCorrect++;
+    addXP(15);
+  } else {
+    btn.classList.add('incorrect');
+    options.forEach(opt => {
+      if (opt.getAttribute('onclick').includes('true')) opt.classList.add('correct');
+    });
+    fb.className = 'quiz-feedback incorrect-fb show';
+  }
+
+  const explanation = quizExplanations[id] || '';
+  fb.innerHTML = (correct ? '✅ ' : '❌ ') + explanation;
+
+  saveState();
+  checkBadges();
+};
+
+// ── Scenario Logic ──
+const scenarioData = {};
+
+function answerScenario(id, idx, btn) {
+  if (state.scenarioAnswered.includes(id)) return;
+  state.scenarioAnswered.push(id);
+
+  const container = document.getElementById('scenario-' + id);
+  const choices = container.querySelectorAll('.scenario-choice');
+  const resultDiv = document.getElementById('scenario-result-' + id);
+
+  choices.forEach(c => c.disabled = true);
+
+  // Find the quest that contains this scenario
+  for (const quest of QUESTS) {
+    const html = quest.content();
+    if (html.includes(`scenario-${id}`)) {
+      // Parse the scenario data from the HTML generation
+      break;
+    }
+  }
+
+  // We need to store scenario data too
+  const data = scenarioData[id];
+  if (data && data[idx]) {
+    const choice = data[idx];
+    btn.style.borderColor = choice.isGood ? 'var(--green)' : 'var(--orange)';
+    resultDiv.style.background = choice.isGood ? 'rgba(0,230,118,0.1)' : 'rgba(255,171,64,0.1)';
+    resultDiv.style.color = choice.isGood ? 'var(--green)' : 'var(--orange)';
+    resultDiv.textContent = (choice.isGood ? '✅ ' : '💡 ') + choice.result;
+    resultDiv.classList.add('show');
+    if (choice.isGood) addXP(10);
+  }
+
+  saveState();
+}
+
+// Override makeScenario to store data
+window.makeScenario = function(id, question, choices) {
+  scenarioData[id] = choices;
+  const choicesHtml = choices.map((c, i) => `
+    <button class="scenario-choice" onclick="answerScenario('${id}', ${i}, this)" ${state.scenarioAnswered.includes(id) ? 'disabled' : ''}>
+      ${c.text}
+    </button>
+  `).join('');
+
+  return `
+    <div class="scenario-box" id="scenario-${id}">
+      <h4>🎮 Decision Time</h4>
+      <p>${question}</p>
+      <div class="scenario-choices">${choicesHtml}</div>
+      <div class="scenario-result" id="scenario-result-${id}"></div>
+    </div>
+  `;
+};
+
+// ── Compound Interest Calculator ──
+function updateCalc() {
+  const start = parseFloat(document.getElementById('calc-start')?.value) || 0;
+  const monthly = parseFloat(document.getElementById('calc-monthly')?.value) || 0;
+  const years = parseInt(document.getElementById('calc-years')?.value) || 30;
+  const rate = parseFloat(document.getElementById('calc-rate')?.value) || 10;
+
+  const monthlyRate = rate / 100 / 12;
+  const months = years * 12;
+  let total = start;
+
+  for (let i = 0; i < months; i++) {
+    total = total * (1 + monthlyRate) + monthly;
+  }
+
+  const contributed = start + (monthly * months);
+  const earned = total - contributed;
+
+  const totalEl = document.getElementById('calc-total');
+  const detailEl = document.getElementById('calc-detail');
+  if (totalEl) {
+    totalEl.textContent = '$' + Math.round(total).toLocaleString();
+    detailEl.innerHTML = `You put in <strong>$${Math.round(contributed).toLocaleString()}</strong> → Earned <strong>$${Math.round(earned).toLocaleString()}</strong> in growth`;
+  }
+}
+
+// ── Idea Lab ──
+function analyzeIdea() {
+  const input = document.getElementById('idea-input').value.trim();
+  if (!input) return;
+
+  state.ideasSubmitted++;
+  saveState();
+  checkBadges();
+
+  const response = document.getElementById('idea-response');
+  const text = input.toLowerCase();
+
+  let analysis = generateIdeaResponse(text, input);
+
+  response.innerHTML = analysis;
+  response.classList.add('show');
+  addXP(20);
+}
+
+function generateIdeaResponse(text, original) {
+  // Keyword-based analysis
+  if (text.includes('crypto') || text.includes('bitcoin') || text.includes('ethereum') || text.includes('nft')) {
+    return `
+      <h4>🪙 Crypto / Digital Assets</h4>
+      <p>Alright, let's talk about this honestly and without judgment.</p>
+      <p><strong>The upside:</strong> Crypto has created real wealth for some people. Bitcoin and Ethereum have shown staying power and institutional adoption is growing.</p>
+      <p><strong>The reality check:</strong> It's extremely volatile. Many people buy high on excitement and sell low in panic. Unlike stocks, crypto doesn't produce earnings or dividends — its value comes purely from what others will pay for it.</p>
+      <p><strong>If you want to do this:</strong></p>
+      <p>→ Only invest what you'd be okay losing 100% of<br>→ Keep it to 5-10% max of your total investments<br>→ Don't make it your ONLY investment strategy<br>→ Make sure you have index funds as your foundation first<br>→ Never invest your emergency fund or rent money</p>
+      <span class="idea-tag">High Risk</span> <span class="idea-tag">Speculative</span> <span class="idea-tag">Portfolio: Max 5-10%</span>
+    `;
+  }
+
+  if (text.includes('business') || text.includes('sell') || text.includes('etsy') || text.includes('shop') || text.includes('start a') || text.includes('dropship')) {
+    return `
+      <h4>🏪 Starting a Business</h4>
+      <p>Love the entrepreneurial spirit! Here's how to think about this:</p>
+      <p><strong>The exciting part:</strong> A business can generate income WAY beyond what a job can. It's also one of the most rewarding things you can do — building something from nothing.</p>
+      <p><strong>Smart way to start:</strong></p>
+      <p>→ <strong>Start as a side project</strong> — don't quit your job/school yet<br>→ <strong>Test before you invest</strong> — validate demand before spending big<br>→ <strong>Start lean</strong> — the less money you need upfront, the lower your risk<br>→ <strong>Set a budget</strong> — decide upfront how much you'll invest and stick to it<br>→ <strong>Track everything</strong> — revenue, costs, time spent<br>→ <strong>Give it time</strong> — most businesses take 6-12 months to gain traction</p>
+      <p><strong>Key question to ask:</strong> "Is someone already paying for this?" If yes, there's demand. If no one is paying for anything similar, you might be solving a problem that doesn't exist.</p>
+      <span class="idea-tag">Entrepreneurship</span> <span class="idea-tag">Start Lean</span> <span class="idea-tag">High Potential</span>
+    `;
+  }
+
+  if (text.includes('house') || text.includes('property') || text.includes('real estate') || text.includes('rent') || text.includes('apartment') || text.includes('mortgage')) {
+    return `
+      <h4>🏠 Real Estate</h4>
+      <p>Real estate can be a great wealth builder. Here's the framework:</p>
+      <p><strong>Why it can be great:</strong> You can use leverage (a mortgage) to control a $300k asset with $60k down. If the property earns rental income AND appreciates, you're winning on multiple fronts.</p>
+      <p><strong>What to know first:</strong></p>
+      <p>→ <strong>Save for a down payment</strong> (typically 20% to avoid PMI, but FHA loans need only 3.5%)<br>→ <strong>The 1% rule</strong> — a rental should charge ~1% of purchase price in monthly rent to be profitable<br>→ <strong>Hidden costs</strong> — maintenance, vacancies, taxes, insurance add up fast<br>→ <strong>It's NOT passive</strong> — being a landlord is work (unless you hire management, which costs 8-10%)<br>→ <strong>Alternative:</strong> REITs let you invest in real estate through the stock market with as little as $1</p>
+      <p><strong>Good first step:</strong> Before buying property, try investing in a REIT index fund (like VNQ) to get real estate exposure while you save for a down payment.</p>
+      <span class="idea-tag">Real Estate</span> <span class="idea-tag">Leverage</span> <span class="idea-tag">Long-term</span>
+    `;
+  }
+
+  if (text.includes('college') || text.includes('school') || text.includes('degree') || text.includes('university') || text.includes('education')) {
+    return `
+      <h4>🎓 Education & College</h4>
+      <p>This is a big financial decision. Let's break it down:</p>
+      <p><strong>When college is worth it:</strong> If you're pursuing a career that REQUIRES a degree (medicine, law, engineering) or you get into a school with strong job placement and manageable costs.</p>
+      <p><strong>When to think twice:</strong> If you'd take on $100k+ in debt for a degree that doesn't clearly lead to higher earning potential.</p>
+      <p><strong>Things to consider:</strong></p>
+      <p>→ <strong>Community college first</strong> — save thousands by doing your first 2 years at CC<br>→ <strong>Scholarships</strong> — apply for EVERYTHING, it's free money<br>→ <strong>Trade schools</strong> — electricians, plumbers, and welders can earn $60-100k+ with much less debt<br>→ <strong>Self-learning</strong> — for tech/design/business, portfolios often matter more than degrees<br>→ <strong>ROI thinking</strong> — treat it like an investment: what will this degree cost vs. what will it enable me to earn?</p>
+      <p>There's no single right answer here. The key is to be intentional about it rather than going to college "just because."</p>
+      <span class="idea-tag">Education</span> <span class="idea-tag">ROI</span> <span class="idea-tag">Long-term Decision</span>
+    `;
+  }
+
+  if (text.includes('save') || text.includes('saving') || text.includes('$500') || text.includes('$1000') || text.includes('don\'t know') || text.includes('where to start') || text.includes('no idea')) {
+    return `
+      <h4>🌱 Starting From Scratch</h4>
+      <p>The fact that you're even thinking about this puts you ahead. Here's a clear path:</p>
+      <p><strong>Step 1: Open a high-yield savings account</strong> (takes 10 minutes)<br>Move your money from a regular bank to earn 4-5% instead of 0.01%.</p>
+      <p><strong>Step 2: Build a small emergency fund</strong><br>Even $500-1,000 as a safety net makes a huge difference. This prevents you from going into debt when unexpected expenses hit.</p>
+      <p><strong>Step 3: Start investing small</strong><br>Open a Roth IRA or brokerage account. Put even $25/month into a total market index fund (like VTI). Automate it so you don't have to think about it.</p>
+      <p><strong>Step 4: Increase over time</strong><br>As you earn more, increase your contributions. The habit matters more than the amount right now.</p>
+      <p>That's literally it. The biggest step is the first one — just starting.</p>
+      <span class="idea-tag">Beginner Friendly</span> <span class="idea-tag">Start Today</span> <span class="idea-tag">Build Habits</span>
+    `;
+  }
+
+  if (text.includes('stock') || text.includes('invest') || text.includes('index') || text.includes('market') || text.includes('voo') || text.includes('vti') || text.includes('s&p')) {
+    return `
+      <h4>📈 Stock Market Investing</h4>
+      <p>Great thinking! Here's how to approach it:</p>
+      <p><strong>The proven strategy:</strong> Put your money in a low-cost index fund (like VTI or VOO) and let it grow. This is literally what most financial experts recommend. You'll own hundreds of companies at once.</p>
+      <p><strong>If you want to pick individual stocks:</strong></p>
+      <p>→ Only use money you won't need for 5+ years<br>→ Keep individual stock picks to 10-20% max of your portfolio<br>→ Research the company's business, not just its stock price<br>→ Don't try to time the market (buy low, sell high sounds easy but almost nobody can do it consistently)<br>→ Never invest based on social media hype alone</p>
+      <p><strong>The simple approach:</strong><br>80-90% in index funds (VTI, VOO, or a target date fund)<br>0-10% in individual stocks you believe in<br>0-5% in speculative plays (crypto, meme stocks, etc.)</p>
+      <span class="idea-tag">Investing</span> <span class="idea-tag">Index Funds First</span> <span class="idea-tag">Long-term</span>
+    `;
+  }
+
+  // Default response for unmatched ideas
+  return `
+    <h4>💭 Let's Think About This</h4>
+    <p>Interesting idea! Here are some questions to help you think it through:</p>
+    <p><strong>The viability check:</strong></p>
+    <p>→ <strong>Who else is doing this?</strong> — Competition isn't bad, it means there's demand. No competition might mean no demand.<br>→ <strong>What's the cost to start?</strong> — Can you test this with minimal money first?<br>→ <strong>What's the realistic timeline?</strong> — Most things worth doing take longer than expected<br>→ <strong>What's your edge?</strong> — What do you bring to this that others don't?<br>→ <strong>What's the downside?</strong> — If it doesn't work out, what have you lost?</p>
+    <p><strong>General advice:</strong></p>
+    <p>→ Start small and test before going all-in<br>→ Talk to people who've done something similar<br>→ Set a budget for how much you're willing to invest in this idea<br>→ Give yourself a timeline to evaluate (3-6 months)<br>→ Keep your core finances solid (emergency fund, no high-interest debt) while you explore this</p>
+    <p>The best money ideas usually come from solving a real problem you've experienced yourself. Keep exploring!</p>
+    <span class="idea-tag">Explore</span> <span class="idea-tag">Start Small</span> <span class="idea-tag">Test First</span>
+  `;
+}
+
+// ── Badges ──
+function renderBadges() {
+  const grid = document.getElementById('badges-grid');
+  grid.innerHTML = BADGES.map(b => {
+    const earned = b.condition();
+    return `
+      <div style="background:var(--surface); border-radius:var(--radius); padding:20px; text-align:center; opacity:${earned ? 1 : 0.4}; ${earned ? 'border:2px solid var(--gold);' : 'border:2px solid var(--surface2);'}">
+        <div style="font-size:40px; margin-bottom:8px;">${b.icon}</div>
+        <h4 style="font-size:14px; margin-bottom:4px; ${earned ? 'color:var(--gold);' : ''}">${b.name}</h4>
+        <p style="font-size:12px; color:var(--text-dim);">${b.desc}</p>
+        ${earned ? '<p style="font-size:11px; color:var(--green); margin-top:4px;">✓ Earned</p>' : '<p style="font-size:11px; color:var(--text-dim); margin-top:4px;">🔒 Locked</p>'}
+      </div>
+    `;
+  }).join('');
+}
+
+function checkBadges() {
+  for (const badge of BADGES) {
+    if (!state.earnedBadges.includes(badge.id) && badge.condition()) {
+      state.earnedBadges.push(badge.id);
+      showAchievement(badge);
+      saveState();
+    }
+  }
+}
+
+function showAchievement(badge) {
+  const toast = document.createElement('div');
+  toast.className = 'achievement-toast';
+  toast.innerHTML = `
+    <div class="ach-icon">${badge.icon}</div>
+    <div class="ach-info">
+      <h4>Badge Unlocked!</h4>
+      <p>${badge.name} — ${badge.desc}</p>
+    </div>
+  `;
+  document.body.appendChild(toast);
+  setTimeout(() => {
+    toast.style.transition = 'opacity 0.5s';
+    toast.style.opacity = '0';
+    setTimeout(() => toast.remove(), 500);
+  }, 3000);
+}
+
+// ── Confetti ──
+function spawnConfetti() {
+  const colors = ['var(--gold)', 'var(--green)', 'var(--blue)', 'var(--purple)', 'var(--pink)', 'var(--orange)'];
+  for (let i = 0; i < 30; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = Math.random() * 100 + '%';
+    c.style.background = colors[Math.floor(Math.random() * colors.length)];
+    c.style.animationDelay = Math.random() * 0.5 + 's';
+    c.style.animationDuration = (1.5 + Math.random()) + 's';
+    c.style.width = (6 + Math.random() * 8) + 'px';
+    c.style.height = (6 + Math.random() * 8) + 'px';
+    c.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 2500);
+  }
+}
+
+// ── Stars background ──
+function createStars() {
+  const container = document.getElementById('stars');
+  for (let i = 0; i < 50; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    star.style.left = Math.random() * 100 + '%';
+    star.style.top = Math.random() * 100 + '%';
+    star.style.animationDelay = Math.random() * 2 + 's';
+    star.style.width = star.style.height = (1 + Math.random() * 2) + 'px';
+    container.appendChild(star);
+  }
+}
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+
+createStars();
+loadState();
+
+if (state.started) {
+  document.getElementById('xp-bar-container').classList.add('visible');
+  document.getElementById('bottom-nav').classList.add('visible');
+  updateXPBar();
+  showScreen('map');
+} else {
+  document.getElementById('welcome-screen').classList.add('active');
+}
+</script>
+</body>
+</html>

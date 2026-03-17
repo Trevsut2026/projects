@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Unnecessary Help Desk</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #fff8f2;
+            --card: #ffffff;
+            --primary: #ff6b6b;
+            --secondary: #4ecdc4;
+            --accent: #ffd93d;
+            --success: #6bcb77;
+            --text: #2d3436;
+            --text-light: #777;
+            --shadow: 0 4px 24px rgba(0,0,0,0.08);
+            --radius: 18px;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 16px 40px;
+        }
+
+        /* ── HEADER ── */
+        header {
+            text-align: center;
+            padding: 36px 20px 28px;
+            max-width: 560px;
+            width: 100%;
+        }
+        .header-badge {
+            display: inline-block;
+            background: #fff0f0;
+            color: var(--primary);
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 5px 14px;
+            border-radius: 100px;
+            margin-bottom: 14px;
+            border: 2px solid #ffd0d0;
+        }
+        header h1 {
+            font-size: 2.6rem;
+            font-weight: 900;
+            color: var(--text);
+            line-height: 1.15;
+        }
+        header h1 em {
+            color: var(--primary);
+            font-style: normal;
+        }
+        header p {
+            font-size: 1rem;
+            color: var(--text-light);
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        /* ── CONTAINER ── */
+        .container {
+            width: 100%;
+            max-width: 560px;
+        }
+
+        /* ── HOME SCREEN ── */
+        .home-intro {
+            text-align: center;
+            font-size: 0.95rem;
+            color: var(--text-light);
+            font-weight: 700;
+            margin-bottom: 18px;
+        }
+        .task-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+        .task-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 22px 16px 18px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            border: 3px solid transparent;
+            transition: all 0.2s ease;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 800;
+            font-size: 0.9rem;
+            color: var(--text);
+            line-height: 1.3;
+        }
+        .task-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 32px rgba(255, 107, 107, 0.18);
+        }
+        .task-card .t-emoji { font-size: 2.2rem; display: block; margin-bottom: 8px; }
+        .task-card .t-hint {
+            display: block;
+            font-size: 0.73rem;
+            font-weight: 600;
+            color: #bbb;
+            margin-top: 5px;
+        }
+        .task-card.full-width { grid-column: span 2; }
+
+        /* ── QUESTION SCREEN ── */
+        .q-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 32px 28px 28px;
+            box-shadow: var(--shadow);
+            animation: slideUp 0.28s ease;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .q-label {
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 12px;
+        }
+        .progress-track {
+            width: 100%;
+            height: 7px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            margin-bottom: 26px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
+        .q-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text);
+            line-height: 1.4;
+            margin-bottom: 30px;
+        }
+        .btn-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .btn {
+            padding: 15px 10px;
+            border-radius: 13px;
+            border: none;
+            font-family: 'Nunito', sans-serif;
+            font-size: 1rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.18s ease;
+        }
+        .btn:hover { transform: translateY(-2px); }
+        .btn-yes { background: var(--success); color: white; }
+        .btn-yes:hover { background: #5ab866; box-shadow: 0 5px 18px rgba(107,203,119,0.35); }
+        .btn-no  { background: #f2f2f2; color: var(--text); }
+        .btn-no:hover  { background: #e8e8e8; }
+
+        /* ── RESULT SCREEN ── */
+        .result-card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 38px 28px 32px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            animation: slideUp 0.28s ease;
+            border-top: 6px solid transparent;
+        }
+        .result-card.success { border-color: var(--success); }
+        .result-card.maybe   { border-color: var(--accent); }
+        .result-card.help    { border-color: var(--primary); }
+
+        .r-emoji { font-size: 3.8rem; display: block; margin-bottom: 14px; }
+        .r-title { font-size: 1.65rem; font-weight: 900; margin-bottom: 10px; }
+        .result-card.success .r-title { color: #2a8038; }
+        .result-card.maybe   .r-title { color: #b87e00; }
+        .result-card.help    .r-title { color: var(--primary); }
+        .r-text {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--text-light);
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        .result-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+        /* ── SHARED BUTTONS ── */
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 13px 26px;
+            border-radius: 12px;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 800;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.18s ease;
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 18px rgba(255,107,107,0.35); }
+        .btn-ghost {
+            background: white;
+            color: var(--text-light);
+            border: 2px solid #e8e8e8;
+            padding: 12px 22px;
+            border-radius: 12px;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.18s ease;
+        }
+        .btn-ghost:hover { border-color: var(--primary); color: var(--primary); }
+
+        /* ── BACK LINK ── */
+        .back-link {
+            text-align: center;
+            margin-top: 14px;
+        }
+        .back-link button {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-family: 'Nunito', sans-serif;
+            font-weight: 700;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: color 0.15s;
+        }
+        .back-link button:hover { color: var(--primary); }
+
+        /* ── SCREEN TOGGLE ── */
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        /* ── FOOTER ── */
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            color: #ccc;
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-badge">Powered by You, Actually</div>
+    <h1>The <em>Unnecessary</em><br>Help Desk</h1>
+    <p>For things you totally, 100% can do yourself 💅</p>
+</header>
+
+<div class="container">
+
+    <!-- ══ HOME ══ -->
+    <div id="screen-home" class="screen active">
+        <p class="home-intro">What do you need "help" with today?</p>
+        <div class="task-grid">
+            <button class="task-card" onclick="startTask('shelf')">
+                <span class="t-emoji">📦</span>
+                Get something off a shelf
+                <span class="t-hint">It's up there somewhere</span>
+            </button>
+            <button class="task-card" onclick="startTask('phone')">
+                <span class="t-emoji">📱</span>
+                Grab my phone
+                <span class="t-hint">The glowing rectangle</span>
+            </button>
+            <button class="task-card" onclick="startTask('tea')">
+                <span class="t-emoji">☕</span>
+                Make my tea
+                <span class="t-hint">Hot leaf water, coming up</span>
+            </button>
+            <button class="task-card" onclick="startTask('putaway')">
+                <span class="t-emoji">🗂️</span>
+                Put something away
+                <span class="t-hint">It goes... somewhere</span>
+            </button>
+            <button class="task-card full-width" onclick="startTask('charger')">
+                <span class="t-emoji">🔌</span>
+                Unplug my computer charger
+                <span class="t-hint">The cord. In the wall. Yes, that one.</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ══ QUESTION ══ -->
+    <div id="screen-question" class="screen">
+        <div class="q-card">
+            <div class="q-label" id="q-label"></div>
+            <div class="progress-track">
+                <div class="progress-fill" id="q-progress" style="width:20%"></div>
+            </div>
+            <div class="q-text" id="q-text"></div>
+            <div class="btn-row">
+                <button class="btn btn-yes" id="btn-yes">✅ Yes</button>
+                <button class="btn btn-no"  id="btn-no">❌ No</button>
+            </div>
+        </div>
+        <div class="back-link">
+            <button onclick="goHome()">← Pick a different task</button>
+        </div>
+    </div>
+
+    <!-- ══ RESULT ══ -->
+    <div id="screen-result" class="screen">
+        <div class="result-card" id="result-card">
+            <span class="r-emoji" id="r-emoji"></span>
+            <div class="r-title" id="r-title"></div>
+            <p class="r-text" id="r-text"></p>
+            <div class="result-actions">
+                <button class="btn-primary" id="btn-tryagain">Try again 🔄</button>
+                <button class="btn-ghost" onclick="goHome()">← All tasks</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<footer>Made with ❤️ and mild exasperation</footer>
+
+<script>
+// ── FLOWCHART DATA ─────────────────────────────────────────────
+
+const tasks = {
+    shelf: {
+        name: "Get something off a shelf",
+        emoji: "📦",
+        nodes: {
+            start: {
+                text: "Are you currently sitting or lying down?",
+                yes: "q_standup", no: "q_reach"
+            },
+            q_standup: {
+                text: "Have you tried... standing up? I know, groundbreaking concept.",
+                yes: "q_reach", no: "r_cant_stand"
+            },
+            q_reach: {
+                text: "Can you reach the item by just extending your arm?",
+                yes: "r_arm_works", no: "q_stool"
+            },
+            q_stool: {
+                text: "Is there a step stool or sturdy chair anywhere nearby?",
+                yes: "r_stool_time", no: "r_legit_help"
+            }
+        }
+    },
+    phone: {
+        name: "Grab my phone",
+        emoji: "📱",
+        nodes: {
+            start: {
+                text: "Do you know where your phone currently is?",
+                yes: "q_how_far", no: "q_call_it"
+            },
+            q_call_it: {
+                text: "Have you tried calling it from another device to hear where it rang?",
+                yes: "r_follow_sound", no: "r_call_tip"
+            },
+            q_how_far: {
+                text: "Is your phone more than arm's reach away from you right now?",
+                yes: "q_legs", no: "r_its_right_there"
+            },
+            q_legs: {
+                text: "Are your legs currently in full working order?",
+                yes: "r_walk_to_it", no: "r_legs_out"
+            }
+        }
+    },
+    tea: {
+        name: "Make my tea",
+        emoji: "☕",
+        nodes: {
+            start: {
+                text: "Is the kettle broken or completely out of water?",
+                yes: "r_kettle_broken", no: "q_supplies"
+            },
+            q_supplies: {
+                text: "Do you have a mug and tea bags reachable from the kitchen?",
+                yes: "q_can_boil", no: "r_gather_supplies"
+            },
+            q_can_boil: {
+                text: "Do you know how to make the kettle boil water?",
+                yes: "r_tea_wizard", no: "r_tea_tutorial"
+            }
+        }
+    },
+    putaway: {
+        name: "Put something away",
+        emoji: "🗂️",
+        nodes: {
+            start: {
+                text: "Do you know where this item is supposed to live?",
+                yes: "q_hands_free", no: "r_use_instincts"
+            },
+            q_hands_free: {
+                text: "Are both of your hands completely full right now?",
+                yes: "r_put_one_down", no: "r_just_do_it"
+            }
+        }
+    },
+    charger: {
+        name: "Unplug my computer charger",
+        emoji: "🔌",
+        nodes: {
+            start: {
+                text: "Can you physically see the charger plug from where you are?",
+                yes: "q_blocked", no: "r_go_find_it"
+            },
+            q_blocked: {
+                text: "Is something physically blocking you from reaching the plug?",
+                yes: "r_move_obstacle", no: "q_knows_plugs"
+            },
+            q_knows_plugs: {
+                text: "Do you understand the basic concept of how a plug works?",
+                yes: "r_just_unplug", no: "r_plug_tutorial"
+            }
+        }
+    }
+};
+
+const results = {
+    // ── SHELF ──
+    r_arm_works: {
+        type: "success", emoji: "💪",
+        title: "YOUR ARMS WORK!",
+        text: "Extend arm. Grip item. Retrieve item. You've successfully done this thousands of times and today is no different. Go get it. I believe in you."
+    },
+    r_stool_time: {
+        type: "success", emoji: "🪜",
+        title: "Step Stool Time!",
+        text: "Step stools were invented specifically for this moment. Climb up, grab the thing, climb down. You were born for this."
+    },
+    r_cant_stand: {
+        type: "help", emoji: "🏃",
+        title: "Okay, Fair Enough",
+        text: "If standing is genuinely off the table right now, this might actually be a real request. You've earned this one."
+    },
+    r_legit_help: {
+        type: "help", emoji: "🤝",
+        title: "Legitimately Out of Reach",
+        text: "No stool, no chair, genuinely can't reach it. This passes the flowchart audit. A real human is warranted."
+    },
+
+    // ── PHONE ──
+    r_follow_sound: {
+        type: "success", emoji: "🎯",
+        title: "Follow the Sound!",
+        text: "Call it, hear it ring, walk toward the noise. You are a phone detective. The best kind of detective. Go solve the case."
+    },
+    r_call_tip: {
+        type: "success", emoji: "💡",
+        title: "Here's a Pro Tip:",
+        text: "Call your phone from another device → hear it ring → go to it. OR use Find My iPhone. OR check the couch cushions — it is ALWAYS in the couch cushions."
+    },
+    r_its_right_there: {
+        type: "success", emoji: "🤦",
+        title: "...It's Right There.",
+        text: "Your phone is within arm's reach and you considered asking for help. Reach out your hand. Open it. Grab. Done. You are genuinely incredible."
+    },
+    r_walk_to_it: {
+        type: "success", emoji: "🚶‍♀️",
+        title: "Walk to Your Phone!",
+        text: "I know. Walking. A lot to ask. But you've walked further for snacks, and this is arguably more important. Your legs are incredible. Use them."
+    },
+    r_legs_out: {
+        type: "help", emoji: "🚑",
+        title: "Mobility Issue Detected",
+        text: "If the legs are genuinely out of commission, please also consider calling an ambulance before worrying about the phone. If they ARE fine... just walk to it. 😅"
+    },
+
+    // ── TEA ──
+    r_kettle_broken: {
+        type: "help", emoji: "🔧",
+        title: "Broken Kettle = Valid Request!",
+        text: "A broken kettle is a legitimate appliance emergency. Dispatching a human. This is exactly what the Help Desk exists for. You win this one."
+    },
+    r_gather_supplies: {
+        type: "success", emoji: "🕵️",
+        title: "Gather Your Supplies First!",
+        text: "The mug lives in the cupboard. The tea bags are nearby. You are an explorer. Find them. The tea adventure begins with you, and only you."
+    },
+    r_tea_wizard: {
+        type: "success", emoji: "☕",
+        title: "You Can Make Tea!",
+        text: "Fill kettle → press ON → tea bag in mug → pour boiling water → wait 3 mins → remove bag → add milk if you fancy. You are a certified tea wizard. ✨"
+    },
+    r_tea_tutorial: {
+        type: "success", emoji: "📖",
+        title: "Tea Masterclass:",
+        text: "1. Fill kettle with water 💧  2. Press the ON button 🔘  3. Put tea bag in mug 🫖  4. Pour in boiling water ♨️  5. Wait 3 minutes ⏱️  6. Remove bag 🗑️  7. Add milk/sugar 🥛  8. You made tea!! 🎉"
+    },
+
+    // ── PUT AWAY ──
+    r_use_instincts: {
+        type: "success", emoji: "🧠",
+        title: "Trust Your Instincts!",
+        text: "Does it live where you found it? Put it back. Is there an obviously logical place? Put it there. Your spatial reasoning is fully operational. Go use it."
+    },
+    r_put_one_down: {
+        type: "success", emoji: "💥",
+        title: "Advanced Logistics:",
+        text: "Set one thing down. Put the item away. Pick the thing back up. That's it. You just solved a multi-step problem. Tell literally everyone."
+    },
+    r_just_do_it: {
+        type: "success", emoji: "🌟",
+        title: "THIS IS YOUR MOMENT.",
+        text: "You know where it goes. Your hands are free. All systems are go. There is nothing stopping you. Go. Now. I am so proud of you. 🏆"
+    },
+
+    // ── CHARGER ──
+    r_go_find_it: {
+        type: "success", emoji: "🗺️",
+        title: "Journey to the Charger!",
+        text: "Walk to where the charger is. It is a short journey. You will return victorious, charger unplugged, a hero in your own story."
+    },
+    r_move_obstacle: {
+        type: "success", emoji: "🧩",
+        title: "Two Easy Steps:",
+        text: "Step 1: Move whatever is blocking it. Step 2: Unplug the charger. That is literally it. You've solved harder puzzles in your sleep."
+    },
+    r_just_unplug: {
+        type: "success", emoji: "✨",
+        title: "Just Unplug It!",
+        text: "Grip the plastic block (NOT the cord itself). Pull it firmly away from the wall. Hear the satisfying pop. Marvel at what you've accomplished."
+    },
+    r_plug_tutorial: {
+        type: "success", emoji: "🎓",
+        title: "Plug 101:",
+        text: "1. Locate the plastic block where the cable meets the wall socket 🔌  2. Grip that plastic block firmly 🤏  3. Pull it straight out of the wall ➡️  4. It's unplugged! 🎊  You are now almost certainly an electrician."
+    }
+};
+
+// ── ENGINE ─────────────────────────────────────────────────────
+
+let currentTaskId = null;
+let currentNodeId = null;
+
+function startTask(taskId) {
+    currentTaskId = taskId;
+    navigateTo("start");
+    show("screen-question");
+}
+
+function navigateTo(nodeId) {
+    const task  = tasks[currentTaskId];
+    const node  = task.nodes[nodeId];
+
+    if (!node) {
+        showResult(nodeId);
+        return;
+    }
+
+    currentNodeId = nodeId;
+
+    // Progress
+    const nodeKeys = Object.keys(task.nodes);
+    const idx      = nodeKeys.indexOf(nodeId);
+    const pct      = Math.round(((idx + 1) / (nodeKeys.length + 1)) * 100);
+    document.getElementById("q-progress").style.width = pct + "%";
+
+    // Label & text
+    document.getElementById("q-label").textContent = task.emoji + "  " + task.name;
+    document.getElementById("q-text").textContent  = node.text;
+
+    // Wire buttons (replace to remove old listeners)
+    const yesBtn = document.getElementById("btn-yes");
+    const noBtn  = document.getElementById("btn-no");
+    const newYes = yesBtn.cloneNode(true);
+    const newNo  = noBtn.cloneNode(true);
+    yesBtn.parentNode.replaceChild(newYes, yesBtn);
+    noBtn.parentNode.replaceChild(newNo,  noBtn);
+    newYes.addEventListener("click", () => navigateTo(node.yes));
+    newNo.addEventListener("click",  () => navigateTo(node.no));
+
+    show("screen-question");
+}
+
+function showResult(resultId) {
+    const r    = results[resultId];
+    const card = document.getElementById("result-card");
+
+    card.className = "result-card " + r.type;
+    document.getElementById("r-emoji").textContent = r.emoji;
+    document.getElementById("r-title").textContent = r.title;
+    document.getElementById("r-text").textContent  = r.text;
+
+    const tryAgain = document.getElementById("btn-tryagain");
+    const fresh    = tryAgain.cloneNode(true);
+    tryAgain.parentNode.replaceChild(fresh, tryAgain);
+    fresh.addEventListener("click", () => startTask(currentTaskId));
+
+    show("screen-result");
+}
+
+function goHome() {
+    currentTaskId = null;
+    currentNodeId = null;
+    show("screen-home");
+}
+
+function show(id) {
+    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+}
+</script>
+
+</body>
+</html>
