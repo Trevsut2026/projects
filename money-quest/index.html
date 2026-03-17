@@ -1022,6 +1022,114 @@ input[type="range"]::-webkit-slider-thumb {
   font-size: 18px;
   font-weight: bold;
 }
+
+/* ── Financial Planner Game ── */
+.client-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin: 16px 0;
+  border: 2px solid var(--surface2);
+}
+.client-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--surface2);
+}
+.client-avatar {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  flex-shrink: 0;
+}
+.client-header h4 { font-size: 16px; margin-bottom: 2px; }
+.client-header p { font-size: 12px; color: var(--text-dim); }
+.client-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.client-stat {
+  background: var(--surface2);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 12px;
+}
+.client-stat .stat-label { color: var(--text-dim); margin-bottom: 2px; }
+.client-stat .stat-value { font-family: 'Fredoka', sans-serif; font-size: 14px; }
+.client-goal {
+  font-size: 14px;
+  color: var(--text-dim);
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+.client-goal strong { color: var(--text); }
+.portfolio-options { display: flex; flex-direction: column; gap: 10px; }
+.portfolio-option {
+  padding: 14px;
+  background: var(--surface2);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  text-align: left;
+}
+.portfolio-option:hover { border-color: var(--blue); }
+.portfolio-option.best-pick {
+  border-color: var(--green);
+  background: rgba(0,230,118,0.1);
+}
+.portfolio-option.okay-pick {
+  border-color: var(--orange);
+  background: rgba(255,171,64,0.1);
+}
+.portfolio-option.bad-pick {
+  border-color: var(--red);
+  background: rgba(255,82,82,0.1);
+}
+.portfolio-option:disabled { cursor: default; }
+.portfolio-option .port-name {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+.portfolio-option .port-detail { color: var(--text-dim); font-size: 12px; }
+.portfolio-bar {
+  display: flex;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 8px;
+  gap: 1px;
+}
+.portfolio-bar > div { height: 100%; }
+.advisor-feedback {
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.6;
+  display: none;
+}
+.advisor-feedback.show { display: block; animation: pop 0.3s ease-out; }
+.score-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
 </style>
 </head>
 <body>
@@ -1929,6 +2037,247 @@ const QUESTS = [
     `
   },
   {
+    id: 'financial-planner',
+    icon: '🧑‍💼',
+    iconBg: 'linear-gradient(135deg, #26c6da, #00acc1)',
+    title: 'Financial Planner',
+    desc: 'Advise clients on where to put their money',
+    xp: 125,
+    content: () => `
+      <div class="lesson-header">
+        <span class="lesson-emoji">🧑‍💼</span>
+        <h2>You're the Financial Planner</h2>
+        <p>Quest 9 — Real clients, real scenarios. Where should they put their money?</p>
+      </div>
+
+      <div class="lesson-card">
+        <h3>📋 How This Works</h3>
+        <p>You've learned about investing, risk, and the different options out there. Now it's time to put that knowledge to work. You'll meet 5 clients — each with different ages, goals, and risk levels. Your job? Recommend the best portfolio for their situation.</p>
+        <div class="callout">
+          <div class="callout-label">Remember the key principle</div>
+          <p>Younger people can take more risk (they have time to recover from dips). Older people need more stability (they'll need the money soon). Goals and timeline matter as much as age.</p>
+        </div>
+      </div>
+
+      <!-- CLIENT 1: Young & Just Starting -->
+      <div class="client-card" id="client-1">
+        <div class="client-header">
+          <div class="client-avatar" style="background:linear-gradient(135deg, #69f0ae, #00e676);">🧑‍🎓</div>
+          <div>
+            <h4>Maya, 22</h4>
+            <p>Recent college grad, first real job</p>
+          </div>
+        </div>
+        <div class="client-stats">
+          <div class="client-stat"><div class="stat-label">Income</div><div class="stat-value">$48,000/yr</div></div>
+          <div class="client-stat"><div class="stat-label">Savings</div><div class="stat-value">$3,000</div></div>
+          <div class="client-stat"><div class="stat-label">Debt</div><div class="stat-value">$12k student loans</div></div>
+          <div class="client-stat"><div class="stat-label">Timeline</div><div class="stat-value">40+ years</div></div>
+        </div>
+        <div class="client-goal"><strong>Maya says:</strong> "I just started my first job and I want to start investing but I also have student loans. I have no idea what I'm doing — what should I do with my money?"</div>
+        <div class="portfolio-options">
+          <button class="portfolio-option" onclick="adviseClient('client-1', 0)">
+            <div class="port-name">🎰 All In on Crypto</div>
+            <div class="port-detail">100% cryptocurrency — go big or go home</div>
+            <div class="portfolio-bar"><div style="width:100%; background:var(--purple);"></div></div>
+          </button>
+          <button class="portfolio-option" onclick="adviseClient('client-1', 1)">
+            <div class="port-name">🎯 Aggressive Growth</div>
+            <div class="port-detail">90% stock index funds, 10% bonds — maximize long-term growth</div>
+            <div class="portfolio-bar"><div style="width:90%; background:var(--green);"></div><div style="width:10%; background:var(--blue);"></div></div>
+          </button>
+          <button class="portfolio-option" onclick="adviseClient('client-1', 2)">
+            <div class="port-name">🐢 Super Conservative</div>
+            <div class="port-detail">20% stocks, 80% bonds — play it very safe</div>
+            <div class="portfolio-bar"><div style="width:20%; background:var(--green);"></div><div style="width:80%; background:var(--blue);"></div></div>
+          </button>
+          <button class="portfolio-option" onclick="adviseClient('client-1', 3)">
+            <div class="port-name">🏦 All Savings Account</div>
+            <div class="port-detail">100% high-yield savings — no risk at all</div>
+            <div class="portfolio-bar"><div style="width:100%; background:#78909c;"></div></div>
+          </button>
+        </div>
+        <div class="advisor-feedback" id="feedback-client-1"></div>
+      </div>
+
+      <!-- CLIENT 2: Family with Kids -->
+      <div class="client-card" id="client-2">
+        <div class="client-header">
+          <div class="client-avatar" style="background:linear-gradient(135deg, #ffab40, #ff9100);">👨‍👩‍👧</div>
+          <div>
+            <h4>Marcus & Lisa, 35</h4>
+            <p>Married couple, 2 kids (ages 3 and 6)</p>
+          </div>
+        </div>
+        <div class="client-stats">
+          <div class="client-stat"><div class="stat-label">Combined Income</div><div class="stat-value">$120,000/yr</div></div>
+          <div class="client-stat"><div class="stat-label">Savings</div><div class="stat-value">$45,000</div></div>
+          <div class="client-stat"><div class="stat-label">Debt</div><div class="stat-value">$180k mortgage</div></div>
+          <div class="client-stat"><div class="stat-label">Goal</div><div class="stat-value">Kids' college + retirement</div></div>
+        </div>
+        <div class="client-goal"><strong>Marcus says:</strong> "We want to save for our kids' college education AND our own retirement. College is 12-15 years away, retirement is 30 years away. How should we split things up?"</div>
+        <div class="portfolio-options">
+          <button class="portfolio-option" onclick="adviseClient('client-2', 0)">
+            <div class="port-name">🎓 All Into 529 College Fund</div>
+            <div class="port-detail">Put everything into college savings for the kids</div>
+            <div class="portfolio-bar"><div style="width:100%; background:var(--purple);"></div></div>
+          </button>
+          <button class="portfolio-option" onclick="adviseClient('client-2', 1)">
+            <div class="port-name">⚖️ Split Strategy</div>
+            <div class="port-detail">401(k) up to employer match, Roth IRA with index funds, 529 for kids — diversified across goals</div>
+            <div class="portfolio-bar"><div style="width:40%; background:var(--green);"></div><div style="width:30%; background:var(--gold);"></div><div style="width:30%; background:var(--purple);"></div></div>
+          </button>
+          <button class="portfolio-option" onclick="adviseClient('client-2', 2)">
+            <div class="port-name">🏦 Just Save It All</div>
+            <div class="port-detail">Keep it all in savings accounts — can't lose what you don't invest</div>
+            <div class="portfolio-bar"><div style="width:100%; background:#78909c;"></div></div>
+          </button>
+          <button class="portfolio-option" onclick="adviseClient('client-2', 3)">
+            <div class="port-name">📈 100% Stocks</div>
+            <div class="port-detail">All into aggressive stock picks — maximize returns for both goals</div>
+            <div class="portfolio-bar"><div style="width:100%; background:var(--green);"></div></div>
+          </button>
+        </div>
+        <div class="advisor-feedback" id="feedback-client-2"></div>
+      </div>
+
+      <!-- CLIENT 3: Near Retirement -->
+      <div class="client-card" id="client-3">
+        <div class="client-header">
+          <div class="client-avatar" style="background:linear-gradient(135deg, #b388ff, #7c4dff);">👴</div>
+          <div>
+            <h4>Robert, 62</h4>
+            <p>Planning to retire in 3 years</p>
+          </div>
+        </div>
+        <div class="client-stats">
+          <div class="client-stat"><div class="stat-label">Income</div><div class="stat-value">$95,000/yr</div></div>
+          <div class="client-stat"><div class="stat-label">Retirement Savings</div><div class="stat-value">$650,000</div></div>
+          <div class="client-stat"><div class="stat-label">Debt</div><div class="stat-value">None</div></div>
+          <div class="client-stat"><div class="stat-label">Timeline</div><div class="stat-value">3 years to retirement</div></div>
+        </div>
+        <div class="client-goal"><strong>Robert says:</strong> "I'm 3 years from retirement. I've worked hard to save $650k and I can NOT afford to lose a big chunk of it right before I stop working. What should my portfolio look like?"</div>
+        <div class="portfolio-options">
+          <button class="portfolio-option" onclick="adviseClient('client-3', 0)">
+            <div class="port-name">🚀 Aggressive Growth</div>
+            <div class="port-detail">80% stocks, 20% bonds — try to grow it as much as possible before retirement</div>
+            <div class="portfolio-bar"><div style="width:80%; background:var(--green);"></div><div style="width:20%; background:var(--blue);"></div></div>
+          </button>
+          <button class="portfolio-option" onclick="adviseClient('client-3', 1)">
+            <div class="port-name">🛡️ Conservative & Stable</div>
+            <div class="port-detail">30% stocks, 50% bonds, 20% cash/CDs — protect what he has while keeping some growth</div>
+            <div class="portfolio-bar"><div style="width:30%; background:var(--green);"></div><div style="width:50%; background:var(--blue);"></div><div style="width:20%; background:#78909c;"></div></div>
+          </button>
+          <button class="portfolio-option" onclick="adviseClient('client-3', 2)">
+            <div class="port-name">💰 All Cash</div>
+            <div class="port-detail">100% in savings and CDs — zero risk</div>
+            <div class="portfolio-bar"><div style="width:100%; background:#78909c;"></div></div>
+          </button>
+          <button class="portfolio-option" onclick="adviseClient('client-3', 3)">
+            <div class="port-name">🪙 Crypto & Meme Stocks</div>
+            <div class="port-detail">YOLO into high-risk bets — one big win could fund retirement</div>
+            <div class="portfolio-bar"><div style="width:60%; background:var(--purple);"></div><div style="width:40%; background:var(--red);"></div></div>
+          </button>
+        </div>
+        <div class="advisor-feedback" id="feedback-client-3"></div>
+      </div>
+
+      <!-- CLIENT 4: Side Hustle Entrepreneur -->
+      <div class="client-card" id="client-4">
+        <div class="client-header">
+          <div class="client-avatar" style="background:linear-gradient(135deg, #ff80ab, #ff4081);">👩‍💻</div>
+          <div>
+            <h4>Jasmine, 28</h4>
+            <p>Software developer with a growing side business</p>
+          </div>
+        </div>
+        <div class="client-stats">
+          <div class="client-stat"><div class="stat-label">Job Income</div><div class="stat-value">$85,000/yr</div></div>
+          <div class="client-stat"><div class="stat-label">Side Biz Income</div><div class="stat-value">$2,000/mo</div></div>
+          <div class="client-stat"><div class="stat-label">Savings</div><div class="stat-value">$30,000</div></div>
+          <div class="client-stat"><div class="stat-label">Debt</div><div class="stat-value">$5k credit card</div></div>
+        </div>
+        <div class="client-goal"><strong>Jasmine says:</strong> "I make good money at my job plus my side business is growing. But I have $5k in credit card debt at 22% interest. Should I invest my extra money or pay off the debt first?"</div>
+        <div class="portfolio-options">
+          <button class="portfolio-option" onclick="adviseClient('client-4', 0)">
+            <div class="port-name">📈 Invest Everything</div>
+            <div class="port-detail">Put all extra money into index funds — the market returns will beat the debt interest</div>
+            <div class="portfolio-bar"><div style="width:100%; background:var(--green);"></div></div>
+          </button>
+          <button class="portfolio-option" onclick="adviseClient('client-4', 1)">
+            <div class="port-name">🔥 Kill the Debt First</div>
+            <div class="port-detail">Pay off the 22% credit card ASAP, then invest aggressively in index funds</div>
+            <div class="portfolio-bar"><div style="width:30%; background:var(--red);"></div><div style="width:70%; background:var(--green);"></div></div>
+          </button>
+          <button class="portfolio-option" onclick="adviseClient('client-4', 2)">
+            <div class="port-name">🏪 Put It All Into the Business</div>
+            <div class="port-detail">Reinvest everything into growing the side business — bigger potential returns</div>
+            <div class="portfolio-bar"><div style="width:100%; background:var(--orange);"></div></div>
+          </button>
+          <button class="portfolio-option" onclick="adviseClient('client-4', 3)">
+            <div class="port-name">💳 Minimum Payments, Save the Rest</div>
+            <div class="port-detail">Make minimum payments on debt and park everything in savings</div>
+            <div class="portfolio-bar"><div style="width:100%; background:#78909c;"></div></div>
+          </button>
+        </div>
+        <div class="advisor-feedback" id="feedback-client-4"></div>
+      </div>
+
+      <!-- CLIENT 5: Windfall -->
+      <div class="client-card" id="client-5">
+        <div class="client-header">
+          <div class="client-avatar" style="background:linear-gradient(135deg, #ffd700, #ffab40);">🧑</div>
+          <div>
+            <h4>Alex, 19</h4>
+            <p>College student who just inherited $20,000</p>
+          </div>
+        </div>
+        <div class="client-stats">
+          <div class="client-stat"><div class="stat-label">Income</div><div class="stat-value">Part-time, $800/mo</div></div>
+          <div class="client-stat"><div class="stat-label">Inheritance</div><div class="stat-value">$20,000</div></div>
+          <div class="client-stat"><div class="stat-label">Debt</div><div class="stat-value">None yet</div></div>
+          <div class="client-stat"><div class="stat-label">Timeline</div><div class="stat-value">45+ years</div></div>
+        </div>
+        <div class="client-goal"><strong>Alex says:</strong> "My grandpa left me $20,000. I don't want to blow it — he worked hard for this money. But I'm also 19 and don't know anything about investing. What's the smartest thing I can do with this?"</div>
+        <div class="portfolio-options">
+          <button class="portfolio-option" onclick="adviseClient('client-5', 0)">
+            <div class="port-name">🎉 Treat Yourself</div>
+            <div class="port-detail">Buy a car, new wardrobe, and go on a trip — enjoy life while you're young</div>
+            <div class="portfolio-bar"><div style="width:100%; background:var(--red);"></div></div>
+          </button>
+          <button class="portfolio-option" onclick="adviseClient('client-5', 1)">
+            <div class="port-name">🪙 All Crypto</div>
+            <div class="port-detail">Put it all in Bitcoin and Ethereum — young enough to take the risk</div>
+            <div class="portfolio-bar"><div style="width:100%; background:var(--purple);"></div></div>
+          </button>
+          <button class="portfolio-option" onclick="adviseClient('client-5', 2)">
+            <div class="port-name">🧠 Smart Split</div>
+            <div class="port-detail">$5k emergency fund in HYSA, $15k into a Roth IRA invested in total market index fund</div>
+            <div class="portfolio-bar"><div style="width:25%; background:#78909c;"></div><div style="width:75%; background:var(--green);"></div></div>
+          </button>
+          <button class="portfolio-option" onclick="adviseClient('client-5', 3)">
+            <div class="port-name">🏦 All in Savings</div>
+            <div class="port-detail">Put it all in a savings account until you figure things out</div>
+            <div class="portfolio-bar"><div style="width:100%; background:#78909c;"></div></div>
+          </button>
+        </div>
+        <div class="advisor-feedback" id="feedback-client-5"></div>
+      </div>
+
+      <div class="lesson-card">
+        <h3>📊 Your Advisor Score</h3>
+        <p>Advise all 5 clients above to see your results! The key principles to remember:</p>
+        <ul>
+          <li><strong>Time horizon matters most</strong> — young people can handle more risk because they have decades to recover</li>
+          <li><strong>Kill high-interest debt first</strong> — no investment reliably beats 20%+ interest</li>
+          <li><strong>Diversify across goals</strong> — don't put all your eggs in one basket</li>
+          <li><strong>Protect what you can't replace</strong> — the closer to retirement, the more conservative</li>
+          <li><strong>Always have an emergency fund</strong> — before investing, have a safety net</li>
+        </ul>
+      </div>
+    `
+  },
+  {
     id: 'big-picture',
     icon: '🌟',
     iconBg: 'linear-gradient(135deg, #ffd700, #ff6d00)',
@@ -2017,6 +2366,7 @@ const BADGES = [
   { id: 'diversified', name: 'Diversified', icon: '🎯', desc: 'Learn all ways to invest', condition: () => state.completed.includes('ways-to-invest') },
   { id: 'passive', name: 'Sleep Earner', icon: '😴', desc: 'Unlock passive income', condition: () => state.completed.includes('passive-income') },
   { id: 'happy', name: 'Happy Spender', icon: '😊', desc: 'Master spending smart', condition: () => state.completed.includes('happy-money') },
+  { id: 'advisor', name: 'Financial Advisor', icon: '🧑‍💼', desc: 'Complete the financial planner quest', condition: () => state.completed.includes('financial-planner') },
   { id: 'sage', name: 'Money Sage', icon: '🌟', desc: 'Complete the final quest', condition: () => state.completed.includes('big-picture') },
   { id: 'quiz-ace', name: 'Quiz Ace', icon: '🎓', desc: 'Get 5 quiz answers right', condition: () => state.quizCorrect >= 5 },
   { id: 'all-quests', name: 'Quest Master', icon: '👑', desc: 'Complete all quests', condition: () => state.completed.length >= QUESTS.length },
@@ -2394,6 +2744,85 @@ window.makeScenario = function(id, question, choices) {
     </div>
   `;
 };
+
+// ── Financial Planner Game ──
+const clientAdvice = {
+  'client-1': [
+    { quality: 'bad', feedback: "Putting everything into crypto is way too risky for someone just starting out — especially with student loans to pay. Crypto is speculative and Maya could lose most of her money. She needs a stable foundation first: emergency fund, debt plan, and diversified investments." },
+    { quality: 'best', feedback: "Great advice! Maya is 22 with 40+ years until retirement — time is her superpower. A 90/10 stock-to-bond ratio is perfect for her age. She should also make minimum payments on her student loans (likely low interest) while investing, and build a small emergency fund. Starting this early with index funds could easily turn into $1M+ by retirement." },
+    { quality: 'okay', feedback: "This is too conservative for a 22-year-old. With 40+ years ahead, Maya can handle market ups and downs — she has decades to recover. An 80-90% stock allocation would be much better at her age. Being too conservative when you're young means missing out on decades of compounding growth." },
+    { quality: 'bad', feedback: "A savings account earning 4-5% won't keep up with the long-term growth Maya needs. With 40+ years ahead, she's leaving potentially hundreds of thousands on the table by not investing. A HYSA is great for an emergency fund ($3-6 months expenses), but the rest should be in index funds to grow." },
+  ],
+  'client-2': [
+    { quality: 'okay', feedback: "College savings is important, but putting EVERYTHING into a 529 ignores their own retirement — which is just as critical. If they don't save for retirement, they'll depend on their kids for support later. You have to put on your own oxygen mask before helping others. A split approach covering both goals is smarter." },
+    { quality: 'best', feedback: "Excellent advice! This covers all their bases: the 401(k) match is free money (never leave that on the table), the Roth IRA gives them tax-free growth for retirement, and the 529 grows tax-free for college. By diversifying across goals and account types, Marcus and Lisa are set for both the medium-term (college) and long-term (retirement)." },
+    { quality: 'bad', feedback: "With 30 years until retirement and 12-15 until college, keeping everything in savings means inflation will eat away at their purchasing power. They'd need to save MUCH more per month to hit their goals with only 4-5% returns. They need their money invested and growing to afford both college and retirement." },
+    { quality: 'okay', feedback: "100% stocks has good long-term potential, but it's too aggressive for the college fund — they'll need that money in 12-15 years, and a big market crash right before tuition is due would be devastating. The college portion should be more conservative (maybe a target-date 529), while retirement can stay aggressive." },
+  ],
+  'client-3': [
+    { quality: 'bad', feedback: "This is way too aggressive for someone 3 years from retirement! If the market drops 30-40% (which happens), Robert's $650k could become $400k right when he needs it. He can't afford to wait years for recovery when he's about to stop earning. He needs to protect his nest egg." },
+    { quality: 'best', feedback: "Perfect recommendation! The 30% stocks keeps some growth potential (Robert may live 30+ more years in retirement), the 50% bonds provides stability and income, and the 20% cash/CDs gives him 1-2 years of living expenses he can access without selling during a downturn. This protects his wealth while still fighting inflation." },
+    { quality: 'okay', feedback: "Going 100% cash is very safe, but too conservative even for Robert. With potentially 25-30 years of retirement ahead, inflation will steadily erode his purchasing power. $650k in cash today might only have the buying power of $350k in 20 years. He needs some stocks and bonds to maintain his standard of living over a long retirement." },
+    { quality: 'bad', feedback: "This would be terrible advice for Robert. With only 3 years until retirement and no way to replace losses, putting his life savings into crypto and meme stocks could wipe out decades of hard work. There's a huge difference between a 22-year-old taking risks and a 62-year-old gambling with irreplaceable retirement savings." },
+  ],
+  'client-4': [
+    { quality: 'okay', feedback: "While the market averages ~10% returns, Jasmine's credit card charges 22% interest. Every dollar she keeps on that card costs her 22% per year — guaranteed. No investment reliably beats that. However, investing isn't BAD — just kill the high-interest debt first, then invest aggressively." },
+    { quality: 'best', feedback: "Spot on! That 22% credit card interest is an emergency. No reliable investment beats 22% guaranteed returns (which is what paying off the debt effectively earns). Once the $5k is gone, Jasmine is in an amazing position: good income, side hustle money, and no debt. Then she can throw everything into index funds and watch it compound." },
+    { quality: 'okay', feedback: "The entrepreneurial spirit is great, but ignoring 22% credit card debt is like trying to fill a bucket with a hole in it. The interest on that debt is eating her alive. Better plan: kill the debt (1-2 months with her income), THEN consider reinvesting in the business with a clear budget and no debt hanging over her." },
+    { quality: 'bad', feedback: "Minimum payments on a 22% credit card means most of the payment goes to interest — she'd barely make a dent in the balance. Meanwhile, a savings account earns 4-5%. She's losing 17%+ per year on every dollar of that debt. Kill the credit card debt first, then build savings and invest." },
+  ],
+  'client-5': [
+    { quality: 'bad', feedback: "Alex's instinct was right — grandpa worked hard for this money. Spending it all on a car and clothes means it's gone forever. That same $20k invested at age 19 could grow to $800k-$1M+ by retirement. Alex would essentially be trading a million dollars for a used car and some clothes that'll be out of style in a year." },
+    { quality: 'okay', feedback: "Alex is young enough to handle crypto's volatility, but going ALL in on crypto with an inheritance is too risky. A small portion (5-10%) as a speculative play? Sure. But the bulk should go into proven, diversified investments. If crypto crashes 80% (it has before), Alex loses grandpa's legacy." },
+    { quality: 'best', feedback: "This is the perfect advice! The $5k emergency fund gives Alex a safety net (huge for a college student). The $15k in a Roth IRA invested in a total market index fund is chef's kiss — at 19, that $15k could grow to $600k+ by retirement, all tax-free. Grandpa's money would literally set Alex up for life. This honors the gift perfectly." },
+    { quality: 'okay', feedback: "Better than spending it, but at 19, Alex has 45+ years for this money to grow. Leaving $20k in savings at 4-5% vs investing in index funds at ~10% means missing out on potentially hundreds of thousands in growth. A savings account is the right move for the emergency fund portion, but the rest should be invested for the long haul." },
+  ],
+};
+
+let clientsAdvised = 0;
+let clientScore = 0;
+
+function adviseClient(clientId, choice) {
+  const card = document.getElementById(clientId);
+  if (!card) return;
+
+  const options = card.querySelectorAll('.portfolio-option');
+  const alreadyAnswered = Array.from(options).some(o => o.disabled);
+  if (alreadyAnswered) return;
+
+  const advice = clientAdvice[clientId];
+  if (!advice || !advice[choice]) return;
+
+  const result = advice[choice];
+  options.forEach((opt, i) => {
+    opt.disabled = true;
+    const q = advice[i].quality;
+    if (q === 'best') opt.classList.add('best-pick');
+    else if (q === 'okay') opt.classList.add('okay-pick');
+    else opt.classList.add('bad-pick');
+  });
+
+  const fb = document.getElementById('feedback-' + clientId);
+  let scoreLabel = '';
+  if (result.quality === 'best') {
+    scoreLabel = '<span class="score-badge" style="background:rgba(0,230,118,0.15); color:var(--green);">⭐ Great Advice!</span>';
+    clientScore += 2;
+    addXP(20);
+  } else if (result.quality === 'okay') {
+    scoreLabel = '<span class="score-badge" style="background:rgba(255,171,64,0.15); color:var(--orange);">🤔 Not Bad, But...</span>';
+    clientScore += 1;
+    addXP(5);
+  } else {
+    scoreLabel = '<span class="score-badge" style="background:rgba(255,82,82,0.15); color:var(--red);">❌ Risky Move</span>';
+  }
+
+  fb.innerHTML = scoreLabel + '<br>' + result.feedback;
+  fb.style.background = result.quality === 'best' ? 'rgba(0,230,118,0.08)' : result.quality === 'okay' ? 'rgba(255,171,64,0.08)' : 'rgba(255,82,82,0.08)';
+  fb.classList.add('show');
+
+  clientsAdvised++;
+  saveState();
+}
 
 // ── Compound Interest Calculator ──
 function updateCalc() {
